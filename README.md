@@ -8,3 +8,4 @@ Tasks:
 - Start/win/end game
 - Kit skill
 - Testing
+- Moar Ballin_WallHack capabilities will be added.
