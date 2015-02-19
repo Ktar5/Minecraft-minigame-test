@@ -1,11 +1,11 @@
 package ktar.five.TurfWars.SQL;
 
+import org.bukkit.plugin.Plugin;
+
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-
-import org.bukkit.plugin.Plugin;
 
 /**
  * Abstract Database class, serves as a base for any connection method (MySQL,
@@ -110,7 +110,7 @@ public abstract class Database {
      * @throws SQLException           If the query cannot be executed
      * @throws ClassNotFoundException If the driver cannot be found; see {@link #openConnection()}
      */
-    public int updateSQL(String query) throws SQLException,
+    public int[] updateSQL(String query) throws SQLException,
             ClassNotFoundException {
         if (!checkConnection()) {
             openConnection();
@@ -118,11 +118,23 @@ public abstract class Database {
 
         Statement statement = connection.createStatement();
 
-        int ResultCode = statement.executeUpdate(query);
+        int ResultCode = statement.executeUpdate(query, Statement.RETURN_GENERATED_KEYS);
+
+        int firstGeneratedKey = -1;
+
+        ResultSet rs = statement.getGeneratedKeys();
+
+        if (rs.next()) {
+            firstGeneratedKey = rs.getInt(1);
+        }
+
+        if(rs != null){
+            rs.close();
+        }
 
         connection.commit();
 
-        return ResultCode;
+        return new int[]{ResultCode,firstGeneratedKey};
     }
 
     /**

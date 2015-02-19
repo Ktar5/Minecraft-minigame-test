@@ -1,5 +1,10 @@
 isHub: false
 serverid: lobby1
+host: ''
+port: ''
+databse: ''
+username: ''
+password: ''
 hubOptions:
   world: 'world'
   gameServers:

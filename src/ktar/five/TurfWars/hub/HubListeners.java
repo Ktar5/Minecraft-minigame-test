@@ -1,5 +1,7 @@
 package ktar.five.TurfWars.hub;
 
-public class HubListeners {
+import org.bukkit.event.Listener;
+
+public class HubListeners implements Listener{
 	
 }
