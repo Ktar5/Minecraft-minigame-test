@@ -7,10 +7,6 @@ username: ''
 password: ''
 hubOptions:
   world: 'world'
-  gameServers:
-    - lobby1
-    - lobby2
-    - lobby3
   hubNpcLocations:
     loc1:
       x: '-1.2'

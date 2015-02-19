@@ -12,31 +12,28 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
-public class ServerMenuItem extends MenuItem
+public class ServerActiveMenuItem extends MenuItem
 {
-	private Lobby lobbyToConnectTo;
-	private Plugin p;
+	private Plugin pl;
+	private String serverid;
 	
-	public ServerMenuItem(Lobby lobby)
+	public ServerActiveMenuItem(int players, String serverid)
 	{
-		super(lobby.getName(), new ItemStack(Material.EMERALD_BLOCK), new String[] 
+		super(serverid, new ItemStack(Material.EMERALD_BLOCK), new String[] 
 				{"",
-			     ChatColor.YELLOW + "Game: " + ChatColor.WHITE + "Turf Wars",
-				 ChatColor.YELLOW + "Map: "	+ ChatColor.WHITE +  Lobby.getGame().toString(),
-				 ChatColor.YELLOW + "Players: " + ChatColor.WHITE + Lobby.players.getAll().values().size() + "/" + (Lobby.players.maxPerTeam * 2),
+				 ChatColor.YELLOW + "Players: " + ChatColor.WHITE + players + "/" + (Lobby.players.maxPerTeam * 2),
 				 "",
-				 ChatColor.GREEN + "Starting in " + Lobby.getGame().seconds + "Seconds",
-				 ChatColor.UNDERLINE +  "Click to Join"
+				 ChatColor.YELLOW + "In Progress",
 				 });
-		this.lobbyToConnectTo = lobby;
-		p = Main.instance;
+		this.serverid = serverid;
+		pl = Main.instance;
 	}
 
 	public void onItemClick(ItemClickEvent event)
 	{
         event.setWillClose(true);
         final String playerName = event.getPlayer().getName();
-        Bukkit.getScheduler().scheduleSyncDelayedTask(p, new Runnable() {
+        Bukkit.getScheduler().scheduleSyncDelayedTask(pl, new Runnable() {
             public void run() {
                 Player p = Bukkit.getPlayerExact(playerName);
                 if (p != null) {

@@ -27,7 +27,7 @@ public class Main extends JavaPlugin implements PluginMessageListener{
 	Connection c = null;
 	public static Economy economy = null;
 	public static int id;
-	
+
 	public static Main instance = null;
 
 	@Override
@@ -47,13 +47,12 @@ public class Main extends JavaPlugin implements PluginMessageListener{
 					"wins int NOT NULL, defeats int NOT NULL, totalKills int NOT NULL, totalDeaths int NOT NULL, topKillsPerMatch int NOT NULL, " +
 					"shortestGame int NOT NULL, longestGame int NOT NULL, topKillStreak int NOT NULL, arrowsShot int NOT NULL, " +
 					"blocksDestroyed int NOT NULL, blocksPlaced int NOT NULL, kitsUnlocked int NOT NULL, PRIMARY KEY (id))");
-			sql.updateSQL("CREATE TABLE IF NOT EXISTS GameStatus (id int NOT NULL AUTO_INCREMENT, status int NOT NULL, playercount int NOT NULL, PRIMARY KEY (id))");
+			sql.updateSQL("CREATE TABLE IF NOT EXISTS GameStatus (id int NOT NULL AUTO_INCREMENT, status int NOT NULL, playercount int NOT NULL, name varchar(255) NOT NULL,PRIMARY KEY (id))");
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 		}
 
 		this.setupEconomy();
-		this.saveDefaultConfig();
 		if(this.getConfig().getBoolean("isHub")){
 			new Hub(this.getConfig());
 			Bukkit.getServer().getPluginManager().registerEvents(new EntityListener(), this);
@@ -61,7 +60,8 @@ public class Main extends JavaPlugin implements PluginMessageListener{
 		}else{
 			new Lobby(this.getConfig());
 			try {
-				id = sql.updateSQL("INSERT INTO GameStatus VALUES (" + GameStatus.RESTARTING.id + ",0)")[1];
+				id = sql.updateSQL("INSERT INTO GameStatus VALUES (" + GameStatus.RESTARTING.id + ", 0, " 
+						+ configuration.getString("serverid") + ")")[1];
 			} catch (SQLException e) {
 				e.printStackTrace();
 			} catch (ClassNotFoundException e) {
@@ -91,7 +91,7 @@ public class Main extends JavaPlugin implements PluginMessageListener{
 
 	public static void updateGameStatus(){
 		try {
-			sql.updateSQL("UPDATE GameStatus VALUES (" + Lobby.status.id + "," + Lobby.players.getAll().size() + ")");
+			sql.updateSQL("UPDATE GameStatus VALUES (" + Lobby.status.id + "," + Lobby.players.getAll().size() + "," + Lobby.serverid + ")");
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} catch (ClassNotFoundException e) {

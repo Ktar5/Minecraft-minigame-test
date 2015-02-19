@@ -143,6 +143,7 @@ public class Lobby implements Listener{
 
 	public static void updateStatus(GameStatus newstatus) {
 		status = newstatus;
+		Main.updateGameStatus();
 	}
 	
 	public static Game getGame(){
