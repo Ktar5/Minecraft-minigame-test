@@ -9,7 +9,7 @@ import org.bukkit.entity.Player;
 public class AchievementGui extends ItemMenu
 {
 	private TurfPlayer player;
-	
+
 	public AchievementGui(Player player)
 	{
 		super("Turf Wars Stats", Size.THREE_LINE, Main.instance);
@@ -52,7 +52,7 @@ Turf Master: Complete all objectives - Reward: 10,000 gems (money vault)
 			}, true));
 		} else {
 			this.setItem(0, new TurfWarsStatsItem("Winner", new String[]{
-			"You have " + player.totalKills + " wins!",
+					"You have " + player.totalKills + " wins!",
 					"You will unlock this once you reach 1000 wins!"
 			}, false));
 			master = false;

@@ -1,0 +1,4 @@
+name: TurfWars
+main: ktar.five.TurfWars.Main
+version: 0.5v
+commands:
