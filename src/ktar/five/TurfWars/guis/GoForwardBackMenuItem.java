@@ -8,10 +8,10 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
-public class GoBackMenuItem extends SubMenuItem
+public class GoForwardBackMenuItem extends SubMenuItem
 {
-	public GoBackMenuItem(ItemMenu gui)
+	public GoForwardBackMenuItem(ItemMenu gui, boolean forward)
 	{
-		super(Main.instance, ChatColor.GRAY + "<- Go Back", new ItemStack(Material.BED), gui, new String[0]);
+		super(Main.instance, ChatColor.GRAY + "<- Go " + (forward ? "To " + gui.getName() : "Back" ), new ItemStack(Material.BED), gui, new String[0]);
 	}
 }

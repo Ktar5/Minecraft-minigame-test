@@ -4,6 +4,7 @@ import ktar.five.TurfWars.Game.Info.GamePlayers;
 import ktar.five.TurfWars.Game.Info.GameStatus;
 import ktar.five.TurfWars.Game.Player.Team;
 import ktar.five.TurfWars.Game.Player.TurfPlayer;
+import ktar.five.TurfWars.Main;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -21,6 +22,7 @@ public class LobbyListeners implements Listener{
 		}else if (Lobby.status == GameStatus.IN_PROGRESS && !players.playerInGame(player.playerUUID) && Lobby.getGame() != null){
 			players.putInTeam(Team.SPECTATOR, player);
 		}
+		Main.updateGameStatus();
 	}
 	
 	@EventHandler
@@ -31,6 +33,7 @@ public class LobbyListeners implements Listener{
 		if(players.playerInGame(player.playerUUID)){
 			players.remove(player);
 		}
+		Main.updateGameStatus();
 	}
 	
 	

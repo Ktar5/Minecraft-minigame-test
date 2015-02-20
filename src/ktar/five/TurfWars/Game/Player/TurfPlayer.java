@@ -12,6 +12,9 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.UUID;
@@ -218,8 +221,19 @@ public class TurfPlayer {
 		p.getInventory().setContents(kit.getItems().toArray(new ItemStack[kit.getItems().size()]));
 	}
 
-	public void returnToLobby(){
-
+	public void returnToHub(){
+		ByteArrayOutputStream b = new ByteArrayOutputStream();
+		DataOutputStream out = new DataOutputStream(b);
+		try
+		{
+			out.writeUTF("Connect");
+			out.writeUTF("hub");
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+		getPlayer().sendPluginMessage(Main.instance, "BungeeCord", b.toByteArray());
 	}
 
 	public void giveArrow() {

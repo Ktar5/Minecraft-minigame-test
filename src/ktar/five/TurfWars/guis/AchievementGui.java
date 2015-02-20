@@ -12,14 +12,13 @@ public class AchievementGui extends ItemMenu
 	
 	public AchievementGui(Player player)
 	{
-		super("Turf Wars", Size.SIX_LINE, Main.instance);
+		super("Turf Wars Stats", Size.SIX_LINE, Main.instance);
 		this.player = new TurfPlayer(player.getUniqueId());
 		initInventory();
 	}
 
 	public void initInventory()	
 	{
-		this.setItem(4, new GoBackMenuItem(this));
 		this.setItem(22, new TurfWarsStatsItem(player));
 	}
 }

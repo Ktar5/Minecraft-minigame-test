@@ -85,7 +85,7 @@ public class EntityListener implements Listener {
 			}
 			event.setCancelled(true);
 		}else if(event.getRightClicked().hasMetadata("HubMob")){
-			ServerSelectGui gui = new ServerSelectGui();
+			ServerSelectGui gui = new ServerSelectGui(true);
 			gui.open(event.getPlayer());
 			event.setCancelled(true);
 		}

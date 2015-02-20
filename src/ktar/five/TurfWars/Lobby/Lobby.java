@@ -96,7 +96,7 @@ public class Lobby implements Listener{
 			if (seconds == 30) {
 				updateStatus(GameStatus.RESTARTING);
 				for (TurfPlayer player : players.getAll().values()) {
-					player.returnToLobby();
+					player.returnToHub();
 				}
 				endGame(info.getWinning());
 				players.clear();

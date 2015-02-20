@@ -17,7 +17,9 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.DataInputStream;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
@@ -52,6 +54,9 @@ public class Main extends JavaPlugin implements PluginMessageListener{
 			e.printStackTrace();
 		}
 
+		this.getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
+		this.getServer().getMessenger().registerIncomingPluginChannel(this, "BungeeCord", this);
+
 		this.setupEconomy();
 		if(this.getConfig().getBoolean("isHub")){
 			new Hub(this.getConfig());
@@ -71,7 +76,6 @@ public class Main extends JavaPlugin implements PluginMessageListener{
 			Bukkit.getServer().getPluginManager().registerEvents(new GameListeners(), this);
 			Bukkit.getServer().getPluginManager().registerEvents(new EntityListener(), this);
 		}
-
 		this.getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
 		this.getServer().getMessenger().registerIncomingPluginChannel(this, "BungeeCord", this);
 	}
@@ -80,7 +84,7 @@ public class Main extends JavaPlugin implements PluginMessageListener{
 	public void onDisable() {
 		instance = null;
 		try {
-			sql.updateSQL("DELETE FROM GameStatus WHERE id=" + id);
+			sql.updateSQL("DELETE FROM GameStatus WHERE name=" + Lobby.serverid);
 			sql.closeConnection();
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -91,7 +95,7 @@ public class Main extends JavaPlugin implements PluginMessageListener{
 
 	public static void updateGameStatus(){
 		try {
-			sql.updateSQL("UPDATE GameStatus VALUES (" + Lobby.status.id + "," + Lobby.players.getAll().size() + "," + Lobby.serverid + ")");
+			sql.updateSQL("UPDATE GameStatus VALUES (" + Lobby.status.id + "," + Lobby.players.getAll().size() + "," + Lobby.serverid + ") WHERE name=" + Lobby.serverid);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} catch (ClassNotFoundException e) {
@@ -126,7 +130,7 @@ public class Main extends JavaPlugin implements PluginMessageListener{
 
 			//This is where we will send the status back.
 			String status = "Something";
-			sendBungeeGameStatus("LobbyBungeeName", status);
+
 
 
 		}else if (subchannel.equals("GameStatusReturn")) {
@@ -145,77 +149,5 @@ public class Main extends JavaPlugin implements PluginMessageListener{
 			//Set status somewhere..... For gui.... Hashmap???/
 		}
 	}
-
-
-	public void getBungeeGameStatus(String BungeeName){
-		ByteArrayOutputStream b = new ByteArrayOutputStream();
-		DataOutputStream out = new DataOutputStream(b);
-		try
-		{
-			out.writeUTF("Forward");
-			out.writeUTF(BungeeName);
-			out.writeUTF("GameStatus");
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-		}
-
-		if (Bukkit.getOnlinePlayers().size() > 0)
-		{
-			Player p = Bukkit.getOnlinePlayers().iterator().next();
-			p.sendPluginMessage(this, "BungeeCord", b.toByteArray());
-		}
-	}
-
-	public void sendBungeeGameStatus(String BungeeName, String Status){
-		ByteArrayOutputStream b = new ByteArrayOutputStream();
-		DataOutputStream out = new DataOutputStream(b);
-		try
-		{
-			out.writeUTF("Forward");
-			out.writeUTF(BungeeName);
-			out.writeUTF("GameStatusReturn");
-			ByteArrayOutputStream msgbytes = new ByteArrayOutputStream();
-			DataOutputStream msgout = new DataOutputStream(msgbytes);
-			msgout.writeUTF(Status);
-
-			out.write(msgbytes.toByteArray());
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-		}
-
-		if (Bukkit.getOnlinePlayers().size() > 0)
-		{
-			Player p = Bukkit.getOnlinePlayers().iterator().next();
-			p.sendPluginMessage(this, "BungeeCord", b.toByteArray());
-		}
-	}
-
-	public void getBungeePlayerCount(String BungeeName){
-		ByteArrayOutputStream b = new ByteArrayOutputStream();
-		DataOutputStream out = new DataOutputStream(b);
-		try
-		{      
-			out.writeUTF("PlayerCount");
-			out.writeUTF(BungeeName);
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-		}
-
-		if (Bukkit.getOnlinePlayers().size() > 0)
-		{
-			Player p = Bukkit.getOnlinePlayers().iterator().next();
-			p.sendPluginMessage(this, "BungeeCord", b.toByteArray());
-		}
-	}
-
-
-
-
 
 }
