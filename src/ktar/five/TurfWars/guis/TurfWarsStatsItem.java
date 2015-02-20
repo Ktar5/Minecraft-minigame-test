@@ -8,8 +8,8 @@ import org.bukkit.inventory.ItemStack;
 
 public class TurfWarsStatsItem extends MenuItem
 {
-	public TurfWarsStatsItem(String stat, String[] lore)
+	public TurfWarsStatsItem(String stat, String[] lore, boolean unlocked)
 	{
-		super(ChatColor.BOLD + stat, new ItemStack(Material.BOOK), lore);	
+		super(ChatColor.BOLD + stat, unlocked ? new ItemStack(Material.BOOK) : new ItemStack(Material.BEDROCK), lore);
 	}
 }

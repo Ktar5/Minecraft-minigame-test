@@ -33,6 +33,8 @@ public class TurfPlayer {
 	public int arrows;
 	public double multiplier, moneyGotThisRound;
 	public boolean canVenture, canMove, isSuperSlowed;
+	public boolean isMaster;
+
 
 	public TurfPlayer(UUID uu) {
 		try {
@@ -66,6 +68,7 @@ public class TurfPlayer {
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 		}
+		this.isMaster = isMaster();
 	}
 
 	public Player getPlayer() {
@@ -151,6 +154,18 @@ public class TurfPlayer {
 			shortestGame = gameTime;
 		if (gameTime > longestGame)
 			longestGame = gameTime;
+
+		if(wins == 1000)
+			this.moneyGotThisRound += 10000;
+		if(topKillsPerMatch < 40 && currentKillsThisMatch >= 40)
+			this.moneyGotThisRound += 500;
+		else if(topKillsPerMatch < 100 && currentKillsThisMatch >= 100)
+			this.moneyGotThisRound += 1250;
+		if(shortestGame > 180 && gameTime <= 180)
+			this.moneyGotThisRound += 300;
+		if(isMaster == false && isMaster() == true)
+			this.moneyGotThisRound += 10000;
+
 		Main.economy.depositPlayer(this.getPlayer().getPlayer(), this.moneyGotThisRound*multiplier);
 	}
 
@@ -162,7 +177,16 @@ public class TurfPlayer {
 			shortestGame = gameTime;
 		if (gameTime > longestGame)
 			longestGame = gameTime;
-		
+
+		if(topKillsPerMatch < 40 && currentKillsThisMatch >= 40)
+			this.moneyGotThisRound += 500;
+		else if(topKillsPerMatch < 100 && currentKillsThisMatch >= 100)
+			this.moneyGotThisRound += 1250;
+		if(shortestGame > 180 && gameTime <= 180)
+			this.moneyGotThisRound += 300;
+		if(isMaster == false && isMaster() == true)
+			this.moneyGotThisRound += 10000;
+
 		Main.economy.depositPlayer(this.getPlayer().getPlayer(), this.moneyGotThisRound*multiplier);
 	}
 
@@ -176,13 +200,24 @@ public class TurfPlayer {
 
 	public void addKill() {
 		currentKillStreak++;
+		if(currentKillStreak >= 20 && topKillStreak < 20){
+			addMoney(100);
+		}
 		totalKills++;
+		if(totalKills == 1000){
+			addMoney(1000);
+		}else if(totalKills == 10000){
+			addMoney(10000);
+		}
 		currentKillsThisMatch++;
 		addMoney(0.5);
 	}
 
 	public void brokeBlock() {
 		this.blocksDestroyed++;
+		if(this.blocksDestroyed == 5000){
+			addMoney(500);
+		}
 	}
 
 	public void placedBlock() {
@@ -191,6 +226,9 @@ public class TurfPlayer {
 
 	public void shotArrow() {
 		this.arrowsShot++;
+		if(arrowsShot == 10000){
+			addMoney(1000);
+		}
 		this.arrows--;
 		if (!Cooldown.isCooling(this.playerUUID, "arrow")) {
 			this.addArrowCooldown();
@@ -244,6 +282,16 @@ public class TurfPlayer {
 			this.addArrowCooldown();
 		}
 	}
+
+	public boolean isMaster() {
+		if (wins >= 1000 &&totalKills >= 1000 && totalKills >= 10000 && topKillsPerMatch >= 40
+				&& topKillsPerMatch >= 100 && shortestGame <= 180 &&
+				topKillStreak >= 20 && blocksDestroyed >= 5000 && arrowsShot >= 10000) {
+			return true;
+		}
+		return false;
+	}
+
 }
 
 
