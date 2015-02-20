@@ -2,6 +2,7 @@ package ktar.five.TurfWars;
 
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteStreams;
+
 import ktar.five.TurfWars.Game.GameListeners;
 import ktar.five.TurfWars.Game.Info.GameStatus;
 import ktar.five.TurfWars.Lobby.Lobby;
@@ -10,7 +11,10 @@ import ktar.five.TurfWars.SQL.MySQL;
 import ktar.five.TurfWars.hub.Hub;
 import ktar.five.TurfWars.hub.HubListeners;
 import net.milkbowl.vault.economy.Economy;
+
 import org.bukkit.Bukkit;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.RegisteredServiceProvider;
@@ -78,6 +82,8 @@ public class Main extends JavaPlugin implements PluginMessageListener{
 		}
 		this.getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
 		this.getServer().getMessenger().registerIncomingPluginChannel(this, "BungeeCord", this);
+		
+		this.getCommand("turf").setExecutor(new Commands());
 	}
 
 	@Override
