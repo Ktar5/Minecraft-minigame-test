@@ -2,7 +2,7 @@ isHub: false
 serverid: lobby1
 host: ''
 port: ''
-databse: ''
+database: ''
 username: ''
 password: ''
 hubOptions:
@@ -10,12 +10,12 @@ hubOptions:
   hubNpcLocations:
     loc1:
       x: '-1.2'
-      y: 1
-      z '3'
+      y: '1'
+      z: '3'
     loc2:
       x: '-8.2'
-      y: 5
-      z '7'
+      y: '5'
+      z: '7'
 
 lobbyOptions:
   world: 'neweb'
@@ -23,57 +23,57 @@ lobbyOptions:
     fireworks:
       one:
         x: '-8.2'
-        y: 5
-        z '7'
+        y: '5'
+        z: '7'
       two:
         x: '-8.2'
-        y: 5
-        z '7'
+        y: '5'
+        z: '7'
     winning:
       x: '-8.2'
-      y: 5
-      z '7'
+      y: '5'
+      z: '7'
     loosing:
       x: '-8.2'
-      y: 5
-      z '7'
+      y: '5'
+      z: '7'
     infiltrator:
       x: '-8.2'
-      y: 5
-      z '7'
+      y: '5'
+      z: '7'
     marksman:
       x: '-8.2'
-      y: 5
-      z '7'
+      y: '5'
+      z: '7'
     shredder:
       x: '-8.2'
-      y: 5
-      z '7'     
+      y: '5'
+      z: '7'     
     blueSheep:
       x: '-8.2'
-      y: 5
-      z '7'
+      y: '5'
+      z: '7'
     redSheep:
       x: '-8.2'
-      y: 5
-      z '7'
+      y: '5'
+      z: '7'
     blueSpawn:
       x: '-8.2'
-      y: 5
-      z '7'
+      y: '5'
+      z: '7'
     redSpawn:
       x: '-8.2'
-      y: 5
-      z '7' 
+      y: '5'
+      z: '7' 
     boundaryOne:
       x: '-8.2'
-      y: 5
-      z '7'
+      y: '5'
+      z: '7'
     boundaryTwo:
       x: '-8.2'
-      y: 5
-      z '7'
+      y: '5'
+      z: '7'
     lobbySpawn:
       x: '-8.2'
-      y: 5
-      z '7'      
+      y: '5'
+      z: '7'      

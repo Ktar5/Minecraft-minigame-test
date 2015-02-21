@@ -1,15 +1,19 @@
 package ktar.five.TurfWars.Lobby;
 
-import ktar.five.TurfWars.Game.Cooling.Cooldown;
+import java.util.ArrayList;
+import java.util.List;
+
+import ktar.five.TurfWars.GenericUtils;
+import ktar.five.TurfWars.Main;
 import ktar.five.TurfWars.Game.Game;
+import ktar.five.TurfWars.Game.Cooling.Cooldown;
 import ktar.five.TurfWars.Game.Info.GamePlayers;
 import ktar.five.TurfWars.Game.Info.GameStatus;
 import ktar.five.TurfWars.Game.Info.WorldManager;
 import ktar.five.TurfWars.Game.Player.Team;
 import ktar.five.TurfWars.Game.Player.TurfPlayer;
 import ktar.five.TurfWars.Game.Scoreboard.Scoreboards;
-import ktar.five.TurfWars.GenericUtils;
-import ktar.five.TurfWars.Main;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -17,9 +21,6 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class Lobby implements Listener{
 
@@ -32,7 +33,6 @@ public class Lobby implements Listener{
 	public static String serverid;
 
 	public Lobby(FileConfiguration config){
-		this.createTimer();
 		players = new GamePlayers();
 		seconds = 0;
 		serverid = config.getString("serverid");
@@ -57,6 +57,8 @@ public class Lobby implements Listener{
 				GenericUtils.configToLocation(locations.getConfigurationSection("loosing"), world));
 		status = GameStatus.WAITING_FOR_PLAYERS;
 		game = new Game(serverid);
+		Main.updateGameStatus();
+		this.createTimer();
 	}
 	
     private void createTimer() {

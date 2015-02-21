@@ -1,11 +1,15 @@
 package ktar.five.TurfWars.Game.Info;
 
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
+import ktar.five.TurfWars.Main;
 import ktar.five.TurfWars.Game.Player.Team;
 import ktar.five.TurfWars.Game.Player.TurfPlayer;
-import ktar.five.TurfWars.Main;
-
-import java.sql.SQLException;
-import java.util.*;
 
 public class GamePlayers {
 
@@ -59,6 +63,7 @@ public class GamePlayers {
         Map<UUID, TurfPlayer> players = new HashMap<>();
         players.putAll(blueTeam);
         players.putAll(redTeam);
+        players.putAll(spectators);
         return players;
     }
 
@@ -72,7 +77,7 @@ public class GamePlayers {
         } else if (redTeam.size() > blueTeam.size()) {
             return Team.BLUE;
         } else {
-            return null;
+            return Team.BLUE;
         }
     }
 
@@ -92,13 +97,8 @@ public class GamePlayers {
         }
     }
 
-    public boolean putInLowerTeam(TurfPlayer player) {
-        if (playerInGame(player.playerUUID)) {
-            return false;
-        } else {
+    public void putInLowerTeam(TurfPlayer player) {
             putInTeam(getTeamWithLess(), player);
-            return true;
-        }
     }
 
     public byte getTeamByte(TurfPlayer player) {

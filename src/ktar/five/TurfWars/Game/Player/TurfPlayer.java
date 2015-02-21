@@ -1,9 +1,17 @@
 package ktar.five.TurfWars.Game.Player;
 
-import ktar.five.TurfWars.Game.Cooling.Cooldown;
-import ktar.five.TurfWars.Game.Game;
-import ktar.five.TurfWars.Lobby.Lobby;
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.UUID;
+
 import ktar.five.TurfWars.Main;
+import ktar.five.TurfWars.Game.Game;
+import ktar.five.TurfWars.Game.Cooling.Cooldown;
+import ktar.five.TurfWars.Lobby.Lobby;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -11,13 +19,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.UUID;
 
 public class TurfPlayer {
 
@@ -29,7 +30,7 @@ public class TurfPlayer {
 	topKillsPerMatch, currentKillsThisMatch, /*kit kills*/
 	shortestGame, longestGame,
 	blocksDestroyed, blocksPlaced, arrowsShot,
-	topKillStreak, currentKillStreak, kitsUnlocked;
+	topKillStreak, currentKillStreak, kitsUnlocked, money;
 	public int arrows;
 	public double multiplier, moneyGotThisRound;
 	public boolean canVenture, canMove, isSuperSlowed;
@@ -39,7 +40,7 @@ public class TurfPlayer {
 	public TurfPlayer(UUID uu) {
 		try {
 			this.playerUUID = uu;
-			ResultSet rs = Main.sql.querySQL("SELECT * FROM UserStats WHERE uuid = " + uu.toString());
+			ResultSet rs = Main.sql.querySQL("SELECT * FROM UserStats WHERE uuid='" + uu.toString() + "'");
 			while(rs.next()) {
 				this.id = rs.getInt("id");
 				this.wins = rs.getInt("wins");
@@ -56,19 +57,23 @@ public class TurfPlayer {
 				this.blocksDestroyed = rs.getInt("blocksDestroyed");
 				this.blocksPlaced = rs.getInt("blocksPlaced");
 				this.kitsUnlocked = rs.getInt("kitsUnlocked");
+				this.money = rs.getInt("money");
 				this.kit = Kit.MARKSMAN;
 				rs.close();
 				return;
 			}
 			wins = defeats = totalKills = totalDeaths = topKillsPerMatch = currentKillsThisMatch = /*kit kills*/
 					shortestGame = longestGame = blocksDestroyed = blocksPlaced = arrowsShot =
-							topKillStreak = currentKillStreak = kitsUnlocked = 0;
+							topKillStreak = currentKillStreak = kitsUnlocked = money = 0;
 			this.kit = Kit.MARKSMAN;
 			rs.close();
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 		}
 		this.isMaster = isMaster();
+		canVenture = true;
+		canMove= true;
+		isSuperSlowed = false;
 	}
 
 	public Player getPlayer() {
@@ -93,11 +98,11 @@ public class TurfPlayer {
 	}
 
 	public double getBalance(){
-		return Main.economy.getBalance(this.getPlayer().getPlayer());
+		return this.money;
 	}
 
 	public void removeMoney(double amount){
-		Main.economy.withdrawPlayer(this.getPlayer().getPlayer(), amount);
+		this.money -= amount;
 	}
 
 	public boolean canBuy(double amount){
@@ -166,7 +171,7 @@ public class TurfPlayer {
 		if(isMaster == false && isMaster() == true)
 			this.moneyGotThisRound += 10000;
 
-		Main.economy.depositPlayer(this.getPlayer().getPlayer(), this.moneyGotThisRound*multiplier);
+		this.money+= moneyGotThisRound*multiplier;
 	}
 
 	public void addDefeat(int gameTime) {
@@ -187,7 +192,7 @@ public class TurfPlayer {
 		if(isMaster == false && isMaster() == true)
 			this.moneyGotThisRound += 10000;
 
-		Main.economy.depositPlayer(this.getPlayer().getPlayer(), this.moneyGotThisRound*multiplier);
+		this.money+= moneyGotThisRound*multiplier;
 	}
 
 	public void addDeath() {
@@ -210,7 +215,7 @@ public class TurfPlayer {
 			addMoney(10000);
 		}
 		currentKillsThisMatch++;
-		addMoney(0.5);
+		addMoney(1);
 	}
 
 	public void brokeBlock() {
@@ -241,13 +246,13 @@ public class TurfPlayer {
 
 	public String getQuery(){
 		return "INSERT INTO UserStats (uuid, wins, defeats, totalKills, totalDeaths, topKillsPerMatch, shortestGame, longestGame, " +
-				"topKillStreak, arrowsShot, blocksDestroyed, blocksPlaced, kitsUnlocked) " +
-				"VALUES (" + this.playerUUID.toString() + ", " + this.wins  + ", " + this.defeats  + ", " + this.totalKills  + ", " + this.totalDeaths  + ", " +
+				"topKillStreak, arrowsShot, blocksDestroyed, blocksPlaced, kitsUnlocked, money) " +
+				"VALUES ('" + this.playerUUID.toString() + "', " + this.wins  + ", " + this.defeats  + ", " + this.totalKills  + ", " + this.totalDeaths  + ", " +
 				this.topKillsPerMatch  + ", " + this.shortestGame  + ", " + this.longestGame  + ", " + this.topKillStreak  + ", " + this.arrowsShot
 				+ ", " + this.blocksDestroyed  + ", " + this.blocksPlaced  + ", " + this.kitsUnlocked + ") " +
 				"ON DUPLICATE KEY UPDATE wins="+ this.wins  + ", defeats=" + this.defeats  + ", totalKills=" + this.totalKills  + ", totalDeaths=" + this.totalDeaths  + ", topKillsPerMatch=" +
 		this.topKillsPerMatch  + ", shortestGame=" + this.shortestGame  + ", longestGame=" + this.longestGame  + ", topKillStreak=" + this.topKillStreak  + ", arrowsShot=" + this.arrowsShot
-				+ ", blocksDestroyed=" + this.blocksDestroyed  + ", blocksPlaced=" + this.blocksPlaced  + ", kitsUnlocked=" + this.kitsUnlocked + "" ;
+				+ ", blocksDestroyed=" + this.blocksDestroyed  + ", blocksPlaced=" + this.blocksPlaced  + ", kitsUnlocked=" + this.kitsUnlocked + ", money=" + this.money ;
 	}
 
 	public void resetInventory() {

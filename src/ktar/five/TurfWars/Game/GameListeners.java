@@ -2,11 +2,12 @@ package ktar.five.TurfWars.Game;
 
 import java.util.UUID;
 
-import ktar.five.TurfWars.Game.Player.Team;
 import ktar.five.TurfWars.Main;
 import ktar.five.TurfWars.Game.Cooling.TurfEvent;
+import ktar.five.TurfWars.Game.Info.GameStatus;
 import ktar.five.TurfWars.Game.Info.Phase.PhaseType;
 import ktar.five.TurfWars.Game.Player.Kit;
+import ktar.five.TurfWars.Game.Player.Team;
 import ktar.five.TurfWars.Game.Player.TurfPlayer;
 import ktar.five.TurfWars.Lobby.Lobby;
 
@@ -20,9 +21,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
-import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.metadata.FixedMetadataValue;
 
@@ -31,7 +32,7 @@ public class GameListeners implements Listener{
 
 	@EventHandler
 	public void blockPlaceEvent(BlockPlaceEvent event) {
-		if(Lobby.players.playerInGame(event.getPlayer().getUniqueId())){
+		if(Lobby.players.playerInGame(event.getPlayer().getUniqueId()) && Lobby.status == GameStatus.IN_PROGRESS){
 			if(Lobby.getGame().phase.getType() == PhaseType.BUILDING){
 				if(!Lobby.getGame().worldManager.canBePlaced(event.getBlockPlaced(), Lobby.players.getPlayerTeam(event.getPlayer().getUniqueId()))){
 					event.setCancelled(true);
@@ -49,7 +50,7 @@ public class GameListeners implements Listener{
 		if (event.getEntity() instanceof Player) {
 			Player damaged = (Player) event.getEntity();
 
-			if(Lobby.players.playerInGame(damaged.getUniqueId())){
+			if(Lobby.players.playerInGame(damaged.getUniqueId()) && Lobby.status == GameStatus.IN_PROGRESS){
 				if (event.getCause().equals(DamageCause.ENTITY_ATTACK) && event.getDamager() instanceof Player) {
 					Player damager = (Player) event.getDamager();
 					if (Lobby.players.areOnSameTeam(damaged.getUniqueId(), damager.getUniqueId())) {
@@ -85,7 +86,7 @@ public class GameListeners implements Listener{
 		if (event.getEntity() instanceof Player) {
 			Player player = (Player) event.getEntity();
 			DamageCause cause = event.getCause();
-			if(Lobby.players.playerInGame(player.getUniqueId())){
+			if(Lobby.players.playerInGame(player.getUniqueId()) && Lobby.status == GameStatus.IN_PROGRESS){
 
 				if (cause.equals(DamageCause.FALL)) {
 					event.setDamage(0D);
@@ -105,7 +106,7 @@ public class GameListeners implements Listener{
 	@EventHandler
 	public void projectileHitEvent(ProjectileHitEvent event) {
 		Player shooter = Bukkit.getPlayer((UUID) event.getEntity().getMetadata("Arrow").get(0).value());
-		if(Lobby.players.playerInGame(shooter.getUniqueId())){
+		if(Lobby.players.playerInGame(shooter.getUniqueId()) && Lobby.status == GameStatus.IN_PROGRESS){
 			if(event.getEntity().isOnGround()){
 				Lobby.getGame().worldManager.removeIfIsPlacedBlock(event.getEntity().getLocation().getBlock());
 				Lobby.players.getTurfPlayer(shooter.getUniqueId()).brokeBlock();
@@ -117,7 +118,7 @@ public class GameListeners implements Listener{
 
 	@EventHandler
 	public void onPlayerMove(PlayerMoveEvent event) {
-		if(Lobby.players.playerInGame(event.getPlayer().getUniqueId())){
+		if(Lobby.players.playerInGame(event.getPlayer().getUniqueId()) && Lobby.status == GameStatus.IN_PROGRESS){
 			TurfPlayer p = Lobby.players.getTurfPlayer(event.getPlayer().getUniqueId());
 
 			switch (event.getTo().getBlock().getType()){
@@ -143,7 +144,7 @@ public class GameListeners implements Listener{
 
 	@EventHandler
 	public void onArrowGetCooldown(TurfEvent event) {
-		if(Lobby.players.playerInGame(event.getUUID())){
+		if(Lobby.players.playerInGame(event.getUUID()) && Lobby.status == GameStatus.IN_PROGRESS){
 			TurfPlayer player = Lobby.players.getTurfPlayer(event.getUUID());
 			if(player.arrows < player.kit.maxArrows){
 				player.giveArrow();

@@ -1,11 +1,13 @@
 package ktar.five.TurfWars.guiapi.menus.items;
 
+import java.util.Arrays;
+import java.util.List;
+
+import ktar.five.TurfWars.guiapi.menus.events.ItemClickEvent;
+
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import java.util.Arrays;
-import java.util.List;
-import ktar.five.TurfWars.guiapi.menus.events.ItemClickEvent;
 
 /**
  * An Item inside an {@link pigeoncraft.gui.menus.menus.ItemMenu}.

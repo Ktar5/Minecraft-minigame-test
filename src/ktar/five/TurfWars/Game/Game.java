@@ -1,17 +1,19 @@
 package ktar.five.TurfWars.Game;
 
-import com.connorlinfoot.titleapi.TitleAPI;
 import ktar.five.TurfWars.Game.Info.GameStatus;
 import ktar.five.TurfWars.Game.Info.Phase;
 import ktar.five.TurfWars.Game.Info.WorldManager;
 import ktar.five.TurfWars.Game.Player.Team;
 import ktar.five.TurfWars.Game.Player.TurfPlayer;
 import ktar.five.TurfWars.Lobby.Lobby;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+
+import com.connorlinfoot.titleapi.TitleAPI;
 
 public class Game {
 

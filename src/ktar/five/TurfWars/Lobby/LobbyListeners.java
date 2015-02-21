@@ -1,11 +1,13 @@
 package ktar.five.TurfWars.Lobby;
 
+import ktar.five.TurfWars.Main;
 import ktar.five.TurfWars.Game.Info.GamePlayers;
 import ktar.five.TurfWars.Game.Info.GameStatus;
 import ktar.five.TurfWars.Game.Player.Team;
 import ktar.five.TurfWars.Game.Player.TurfPlayer;
-import ktar.five.TurfWars.Main;
+
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -22,18 +24,23 @@ public class LobbyListeners implements Listener{
 		}else if (Lobby.status == GameStatus.IN_PROGRESS && !players.playerInGame(player.playerUUID) && Lobby.getGame() != null){
 			players.putInTeam(Team.SPECTATOR, player);
 		}
+		event.getPlayer().teleport(Lobby.info.lobbySpawn);
 		Main.updateGameStatus();
 	}
 	
 	@EventHandler
 	public void onPlayerDisconnect(PlayerQuitEvent event){
 		GamePlayers players = Lobby.players;
-		TurfPlayer player =players.getTurfPlayer(event.getPlayer().getUniqueId());
+		TurfPlayer player = players.getTurfPlayer(event.getPlayer().getUniqueId());
 		event.getPlayer().setScoreboard(Bukkit.getScoreboardManager().getNewScoreboard());
 		if(players.playerInGame(player.playerUUID)){
 			players.remove(player);
 		}
-		Main.updateGameStatus();
+		Bukkit.getScheduler().scheduleSyncDelayedTask(Main.instance, new Runnable() {
+			public void run() {
+				Main.updateGameStatus();
+			}
+		}, 20);
 	}
 	
 	

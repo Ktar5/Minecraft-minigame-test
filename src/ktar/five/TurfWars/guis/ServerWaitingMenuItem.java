@@ -1,22 +1,22 @@
 package ktar.five.TurfWars.guis;
 
-import ktar.five.TurfWars.Game.Info.GameStatus;
-import ktar.five.TurfWars.Lobby.Lobby;
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 import ktar.five.TurfWars.Main;
+import ktar.five.TurfWars.Game.Info.GameStatus;
 import ktar.five.TurfWars.guiapi.menus.events.ItemClickEvent;
 import ktar.five.TurfWars.guiapi.menus.items.MenuItem;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
-
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 
 public class ServerWaitingMenuItem extends MenuItem
 {
@@ -25,9 +25,9 @@ public class ServerWaitingMenuItem extends MenuItem
 	
 	public ServerWaitingMenuItem(int players, String serverid)
 	{
-		super(serverid, new ItemStack(Material.EMERALD_BLOCK), new String[] 
+		super(serverid, new ItemStack(Material.GOLD_BLOCK), new String[] 
 				{"",
-				 ChatColor.YELLOW + "Players: " + ChatColor.WHITE + players + "/" + (Lobby.players.maxPerTeam * 2),
+				 ChatColor.YELLOW + "Players: " + ChatColor.WHITE + players + "/16",
 				 "",
 				 ChatColor.UNDERLINE +  "Click to Join"
 				 });
@@ -39,7 +39,7 @@ public class ServerWaitingMenuItem extends MenuItem
 	{
 		ResultSet set;
 		try {
-			set = Main.sql.querySQL("SELECT playercount,status FROM GameStatus WHERE name=" + serverid);
+			set = Main.sql.querySQL("SELECT playercount,status FROM GameStatus WHERE name='" + serverid+"'");
 			while (set.next()){
 				if(set.getInt("playercount") >= 16){
 					return;

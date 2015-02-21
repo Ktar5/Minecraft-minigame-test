@@ -5,6 +5,7 @@ import ktar.five.TurfWars.guiapi.menus.MenuListener;
 import ktar.five.TurfWars.guiapi.menus.events.ItemClickEvent;
 import ktar.five.TurfWars.guiapi.menus.items.MenuItem;
 import ktar.five.TurfWars.guiapi.menus.items.StaticMenuItem;
+
 import org.bukkit.Bukkit;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;

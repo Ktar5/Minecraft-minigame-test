@@ -17,11 +17,12 @@ public class GenericUtils {
 	}
 
 	public static Location configToLocation(ConfigurationSection section, World world){
+		System.out.println(section.getString("x") + "   " + section.getString("y") + "   " + section.getString("z"));
 		return new Location (
 				world,
 				Double.valueOf(section.getString("x")),
 				Double.valueOf(section.getString("y")),
-				Double.valueOf(section.getString("z")));
+				Double.valueOf(section.getString("z")));	
 	}
 
 	public static Color getColor(int i) {

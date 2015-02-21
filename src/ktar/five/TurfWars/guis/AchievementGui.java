@@ -146,7 +146,7 @@ public class AchievementGui extends ItemMenu
 				String.valueOf(player.totalDeaths)
 		}, true));
 		this.setItem(30, new TurfWarsStatsItem("KDR", new String[]{
-				String.valueOf(player.totalKills/player.totalDeaths)
+				String.valueOf(player.totalKills/(player.totalDeaths + 1))
 		}, true));
 		this.setItem(32, new TurfWarsStatsItem("Most Kills In A Game", new String[]{
 				String.valueOf(player.topKillsPerMatch)
@@ -155,13 +155,13 @@ public class AchievementGui extends ItemMenu
 				String.valueOf(player.topKillStreak)
 		}, true));
 		this.setItem(34, new TurfWarsStatsItem("Average Kills Per Game", new String[]{
-				String.valueOf(player.totalKills/(player.wins + player.defeats))
+				String.valueOf(player.totalKills/(player.wins + player.defeats + 1))
 		}, true));
 		this.setItem(36, new TurfWarsStatsItem("Average Deaths Per Game", new String[]{
-				String.valueOf(player.totalDeaths/(player.wins + player.defeats))
+				String.valueOf(player.totalDeaths/(player.wins + player.defeats + 1))
 		}, true));
 		this.setItem(37, new TurfWarsStatsItem("Arrow Accuracy", new String[]{
-				String.valueOf(player.totalKills/player.arrowsShot)
+				String.valueOf(player.totalKills/(player.arrowsShot + 1))
 		}, true));
 		this.setItem(38, new TurfWarsStatsItem("Arrows shot", new String[]{
 				String.valueOf(player.arrowsShot)

@@ -1,19 +1,24 @@
 package ktar.five.TurfWars.Lobby;
 
+import java.util.Random;
+
 import ktar.five.TurfWars.GenericUtils;
 import ktar.five.TurfWars.Main;
 import net.minecraft.server.v1_8_R1.EntityInsentient;
 import net.minecraft.server.v1_8_R1.NBTTagCompound;
+
 import org.bukkit.Color;
 import org.bukkit.DyeColor;
 import org.bukkit.FireworkEffect;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_8_R1.entity.CraftLivingEntity;
-import org.bukkit.entity.*;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Firework;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Sheep;
+import org.bukkit.entity.Zombie;
 import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.metadata.FixedMetadataValue;
-
-import java.util.Random;
 
 public class LobbyUtils {
 
@@ -45,10 +50,11 @@ public class LobbyUtils {
 			zombie.setCustomName(meta.toString());
 			zombie.setCustomNameVisible(true);
 		}
-
+		System.out.println("reached..");
 		entity.setCanPickupItems(false);
-		entity.setMaxHealth(2000d);
-		entity.setHealth(2000d);
+		entity.setMaxHealth(40d);
+		entity.setHealth(40d);
+		System.out.println("reached..SECOND");
 		entity.setRemoveWhenFarAway(false);
 		entity.setMetadata("LobbyMob", new FixedMetadataValue(Main.instance, meta.toString()));
 
@@ -57,7 +63,8 @@ public class LobbyUtils {
 		nmsEntity.c(tag);
 		tag.setBoolean("NoAI", true);
 		nmsEntity.a(tag);
-
+		Main.entities.add(entity);
+		System.out.println(entity.getLocation().toString());
 	}
 
 	public static void playFireworks() {
