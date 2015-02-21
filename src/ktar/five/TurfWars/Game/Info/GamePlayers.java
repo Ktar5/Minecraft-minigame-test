@@ -146,7 +146,7 @@ public class GamePlayers {
     	}
     	
     	try {
-			Main.instance.sql.sendBatchStatement(stmts.toArray(new String[stmts.size()]));
+			Main.sql.sendBatchStatement(stmts.toArray(new String[stmts.size()]));
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 		}

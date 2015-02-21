@@ -15,7 +15,7 @@ public class Commands implements CommandExecutor {
 		if(cmd.getName().equalsIgnoreCase("turf")){
 			if(sender instanceof Player){
 				Player player = (Player) sender;
-				if(args[0].equalsIgnoreCase("stats")){
+				if(args[0].equalsIgnoreCase("achievement")){
 					AchievementGui gui = new AchievementGui(player);
 					gui.open(player);
 				}

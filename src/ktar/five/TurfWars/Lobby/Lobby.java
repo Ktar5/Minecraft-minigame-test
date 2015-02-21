@@ -43,7 +43,7 @@ public class Lobby implements Listener{
 				GenericUtils.configToLocation(locations.getConfigurationSection("marksman"), world), 
 				GenericUtils.configToLocation(locations.getConfigurationSection("infiltrator"), world), 
 				GenericUtils.configToLocation(locations.getConfigurationSection("shredder"), world));
-		List<Location> fireworks = new ArrayList<Location>();
+		List<Location> fireworks = new ArrayList<>();
 		for(String section : locations.getConfigurationSection("fireworks").getKeys(false)){
 			fireworks.add(GenericUtils.configToLocation(locations.getConfigurationSection("fireworks." + section), world));
 		}

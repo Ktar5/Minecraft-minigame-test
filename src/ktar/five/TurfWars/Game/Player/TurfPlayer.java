@@ -39,7 +39,7 @@ public class TurfPlayer {
 	public TurfPlayer(UUID uu) {
 		try {
 			this.playerUUID = uu;
-			ResultSet rs = Main.instance.sql.querySQL("SELECT * FROM UserStats WHERE uuid = " + uu.toString());
+			ResultSet rs = Main.sql.querySQL("SELECT * FROM UserStats WHERE uuid = " + uu.toString());
 			while(rs.next()) {
 				this.id = rs.getInt("id");
 				this.wins = rs.getInt("wins");

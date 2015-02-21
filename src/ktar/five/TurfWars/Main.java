@@ -2,7 +2,6 @@ package ktar.five.TurfWars;
 
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteStreams;
-
 import ktar.five.TurfWars.Game.GameListeners;
 import ktar.five.TurfWars.Game.Info.GameStatus;
 import ktar.five.TurfWars.Lobby.Lobby;
@@ -11,10 +10,7 @@ import ktar.five.TurfWars.SQL.MySQL;
 import ktar.five.TurfWars.hub.Hub;
 import ktar.five.TurfWars.hub.HubListeners;
 import net.milkbowl.vault.economy.Economy;
-
 import org.bukkit.Bukkit;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.RegisteredServiceProvider;
@@ -71,9 +67,7 @@ public class Main extends JavaPlugin implements PluginMessageListener{
 			try {
 				id = sql.updateSQL("INSERT INTO GameStatus VALUES (" + GameStatus.RESTARTING.id + ", 0, " 
 						+ configuration.getString("serverid") + ")")[1];
-			} catch (SQLException e) {
-				e.printStackTrace();
-			} catch (ClassNotFoundException e) {
+			} catch (SQLException | ClassNotFoundException e) {
 				e.printStackTrace();
 			}
 			Bukkit.getServer().getPluginManager().registerEvents(new LobbyListeners(), this);
@@ -92,9 +86,7 @@ public class Main extends JavaPlugin implements PluginMessageListener{
 		try {
 			sql.updateSQL("DELETE FROM GameStatus WHERE name=" + Lobby.serverid);
 			sql.closeConnection();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
+		} catch (SQLException | ClassNotFoundException e) {
 			e.printStackTrace();
 		}
 	}
@@ -102,9 +94,7 @@ public class Main extends JavaPlugin implements PluginMessageListener{
 	public static void updateGameStatus(){
 		try {
 			sql.updateSQL("UPDATE GameStatus VALUES (" + Lobby.status.id + "," + Lobby.players.getAll().size() + "," + Lobby.serverid + ") WHERE name=" + Lobby.serverid);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
+		} catch (SQLException | ClassNotFoundException e) {
 			e.printStackTrace();
 		}
 	}

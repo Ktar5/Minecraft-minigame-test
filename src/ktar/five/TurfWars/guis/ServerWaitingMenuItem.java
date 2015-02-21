@@ -35,7 +35,7 @@ public class ServerWaitingMenuItem extends MenuItem
 		pl = Main.instance;
 	}
 	
-	public void onItemClick(final ItemClickEvent event)
+	public void onItemClick(ItemClickEvent event)
 	{
 		ResultSet set;
 		try {
