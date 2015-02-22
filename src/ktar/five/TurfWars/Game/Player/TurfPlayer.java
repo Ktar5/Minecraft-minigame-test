@@ -109,13 +109,11 @@ public class TurfPlayer {
 		return getBalance()>=amount;
 	}
 
-	public boolean isOnOwnTurf() {
-		Location loc = Bukkit.getPlayer(playerUUID).getLocation().subtract(0, 1, 0);
-		for (int i = 0; i < 3; i++) {
-			loc = loc.subtract(0, 1, 0);
-			if (loc.getBlock().getData() == Lobby.players.getTeamByte(this)) {
-				return true;
-			}
+	public boolean isOnOthersTurf() {
+		Location loc = Bukkit.getPlayer(playerUUID).getLocation();
+		loc = loc.subtract(0, 1, 0);
+		if (loc.getBlock().getData() == Lobby.players.getOtherTeamByte(this)) {
+			return true;
 		}
 		return false;
 	}
@@ -145,7 +143,7 @@ public class TurfPlayer {
 			isSuperSlowed = false;
 		}
 
-		if (!isOnOwnTurf() && !canVenture) {
+		if (isOnOthersTurf() && !canVenture) {
 			getPlayer().setVelocity(to.getDirection().multiply(-2.0D));
 		}
 	}
@@ -249,7 +247,7 @@ public class TurfPlayer {
 				"topKillStreak, arrowsShot, blocksDestroyed, blocksPlaced, kitsUnlocked, money) " +
 				"VALUES ('" + this.playerUUID.toString() + "', " + this.wins  + ", " + this.defeats  + ", " + this.totalKills  + ", " + this.totalDeaths  + ", " +
 				this.topKillsPerMatch  + ", " + this.shortestGame  + ", " + this.longestGame  + ", " + this.topKillStreak  + ", " + this.arrowsShot
-				+ ", " + this.blocksDestroyed  + ", " + this.blocksPlaced  + ", " + this.kitsUnlocked + ") " +
+				+ ", " + this.blocksDestroyed  + ", " + this.blocksPlaced  + ", " + this.kitsUnlocked + ", " + this.money + ") " +
 				"ON DUPLICATE KEY UPDATE wins="+ this.wins  + ", defeats=" + this.defeats  + ", totalKills=" + this.totalKills  + ", totalDeaths=" + this.totalDeaths  + ", topKillsPerMatch=" +
 		this.topKillsPerMatch  + ", shortestGame=" + this.shortestGame  + ", longestGame=" + this.longestGame  + ", topKillStreak=" + this.topKillStreak  + ", arrowsShot=" + this.arrowsShot
 				+ ", blocksDestroyed=" + this.blocksDestroyed  + ", blocksPlaced=" + this.blocksPlaced  + ", kitsUnlocked=" + this.kitsUnlocked + ", money=" + this.money ;
@@ -293,6 +291,14 @@ public class TurfPlayer {
 				&& topKillsPerMatch >= 100 && shortestGame <= 180 &&
 				topKillStreak >= 20 && blocksDestroyed >= 5000 && arrowsShot >= 10000) {
 			return true;
+		}
+		return false;
+	}
+	
+	@Override
+	public boolean equals(Object comp){
+		if(comp instanceof TurfPlayer){
+			return ((TurfPlayer)comp).playerUUID == this.playerUUID;
 		}
 		return false;
 	}

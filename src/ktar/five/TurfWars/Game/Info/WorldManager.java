@@ -15,19 +15,8 @@ import org.bukkit.metadata.FixedMetadataValue;
 public class WorldManager {
 
 	public List<Blocks> turfBlocks;
-	public List<Location> placedBlocks;
-	public Location min,max;
-
-	public final Location lobbySpawn;
-	public final Location redSpawn;
-	public final Location blueSpawn;
-	public final Location boxCorner1;
-	public final Location boxCorner2;
-
-	public final Location winning;
-	public final Location loosing;
-
-	public final List<Location> fireworks;
+	public List<Location> placedBlocks, fireworks;
+	public Location lobbySpawn,redSpawn,blueSpawn,winning,loosing;
 
 	public int red;
 	public int blue;
@@ -39,8 +28,6 @@ public class WorldManager {
 		this.lobbySpawn = lobbySpawn;
 		this.redSpawn = redSpawn;
 		this.blueSpawn = blueSpawn;
-		this.boxCorner1 = boxCorner1;
-		this.boxCorner2 = boxCorner2;
 
 		this.fireworks = fireworks;
 
@@ -52,11 +39,11 @@ public class WorldManager {
 		int xmin = Math.min(boxCorner2.getBlockX(), boxCorner1.getBlockX());
 		int ymin = Math.min(boxCorner2.getBlockY(), boxCorner1.getBlockY());
 		int zmin = Math.min(boxCorner2.getBlockZ(), boxCorner1.getBlockZ());
-		
+
 		int xmax = Math.max(boxCorner2.getBlockX(), boxCorner1.getBlockX());
 		int ymax = Math.max(boxCorner2.getBlockY(), boxCorner1.getBlockY());
 		int zmax = Math.max(boxCorner2.getBlockZ(), boxCorner1.getBlockZ());
-		
+
 		for(int x = xmin ; x <= xmax ; x++){
 			List<Location> blocks = new ArrayList<>();
 			for(int y = ymin ; y <= ymax ; y++){
@@ -66,30 +53,13 @@ public class WorldManager {
 			}
 			turfBlocks.add(new Blocks(Team.SPECTATOR, blocks));
 		}
-
-		for(int i = 0 ; i < turfBlocks.size()/2 ; i++ ){
-			for(Location b : turfBlocks.get(i).blocks){
-				if(b.getBlock().getType().equals(Material.SPONGE)){
-					System.out.println("Worked2");
-					b.getBlock().setType(Material.STAINED_CLAY);
-					b.getBlock().setData(Team.BLUE.color);
-					b.getBlock().setMetadata("floor", new FixedMetadataValue(Main.instance, Team.BLUE));
-				}	
+		
+		for(int i = 0 ; i < turfBlocks.size() ; i++){
+			if(i <= turfBlocks.size()/2){
+				this.addClays(Team.BLUE, i);
+			}else{
+				this.addClays(Team.RED, i);
 			}
-			System.out.println(i);
-			turfBlocks.get(i).team = Team.BLUE;
-		}
-
-		for(int i = turfBlocks.size()-1 ; i >= turfBlocks.size()/2 ; i-- ){
-			for(Location b : turfBlocks.get(i).blocks){
-				if(b.getBlock().getType().equals(Material.SPONGE)){
-					b.getBlock().setType(Material.STAINED_CLAY);
-					b.getBlock().setData(Team.RED.color);
-					b.getBlock().setMetadata("floor", new FixedMetadataValue(Main.instance, Team.RED));
-				}	
-			}
-			System.out.println(i);
-			turfBlocks.get(i).team = Team.RED;
 		}
 
 		blue = red = turfBlocks.size()/2;
@@ -114,53 +84,28 @@ public class WorldManager {
 			}
 		}
 		return false;
-
 	}
 
 	public void addPlacedBlock(Block block) {
 		placedBlocks.add(block.getLocation());
 	}
 
-	public int getCurrent(Team team){
-		int num = 0;
-		if(team == Team.BLUE){
-			for (Blocks turfBlock : turfBlocks) {
-				if (turfBlock.team == team) {
-					num++;
-				} else {
-					return num;
-				}
-			}
-		}else if(team == Team.RED){
-			for (Blocks turfBlock : turfBlocks) {
-				if (turfBlock.team == team) {
-					num++;
-				} else {
-					return num;
-				}
-			}
-		}
-		return num;
-	}
-
 	public void addClays(Team team, int num) {
 		if(team == Team.BLUE){
-			int n = getCurrent(team);
-			blue += num;
 			red -= num;
 			for(int i = 1 ; i <= num ; i++ ){
-				setTeam(team, n+i);
-				if(this.getCurrent(Team.RED) == 0){
+				blue+=1;
+				setTeam(team, blue+i);
+				if(red <= 0){
 					Lobby.teamWon(team);
 				}
 			}
 		}else if(team == Team.RED){
-			int n = turfBlocks.size() - getCurrent(team);
 			blue -= num;
-			red += num;
 			for(int i = 1 ; i <= num ; i++ ){
-				setTeam(team, n-i);
-				if(this.getCurrent(Team.BLUE) == 0){
+				red++;
+				setTeam(team, turfBlocks.size()-1-red);
+				if(blue <= 0){
 					Lobby.teamWon(team);
 				}
 			}
@@ -187,10 +132,16 @@ public class WorldManager {
 	public void setTeam(Team team, int index){
 		this.turfBlocks.get(index).team = team;
 		for(Location b : turfBlocks.get(index).blocks){
-			if(b.getBlock().getType().equals(Material.STAINED_CLAY)){
+			turfBlocks.get(index).team = team;
+			if(b.getBlock().getType().equals(Material.STAINED_CLAY) && b.getBlock().hasMetadata("floor")){
+				b.getBlock().removeMetadata("floor", Main.instance);	
+			}else if(b.getBlock().getType().equals(Material.SPONGE)){
 				b.getBlock().setType(Material.STAINED_CLAY);
-				b.getBlock().setData(team.color);
-			}	
+			}else{
+				return;
+			}
+			b.getBlock().setData(team.color);
+			b.getBlock().setMetadata("floor", new FixedMetadataValue(Main.instance, team));
 		}
 	}
 

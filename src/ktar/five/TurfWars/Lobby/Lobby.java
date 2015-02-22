@@ -21,7 +21,6 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
-import org.bukkit.scheduler.BukkitRunnable;
 
 public class Lobby implements Listener{
 
@@ -29,7 +28,7 @@ public class Lobby implements Listener{
 	public static WorldManager info;
 	public static GameStatus status;
 	public static int seconds;
-	public static int lobbyCountdown = 50;
+	public static int lobbyCountdown = 15;
 	public static GamePlayers players;
 	public static String serverid;
 
@@ -92,7 +91,7 @@ public class Lobby implements Listener{
                 updateStatus(GameStatus.WAITING_FOR_PLAYERS);
             } else if (players.gameFull() && seconds == lobbyCountdown) {
                 this.startGame();
-                seconds =0;
+                seconds = 0;
                 updateStatus(GameStatus.STARTING);
             }
         } else if (status == GameStatus.STARTING || status == GameStatus.IN_PROGRESS){

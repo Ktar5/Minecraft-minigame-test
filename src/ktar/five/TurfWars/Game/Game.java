@@ -18,7 +18,7 @@ import com.connorlinfoot.titleapi.TitleAPI;
 public class Game {
 
 	public final String serverID;
-	public int seconds, totalTime, blockgettercounter;
+	public int totalTime, blockgettercounter;
 	public Phase phase;
 	public WorldManager worldManager;
 
@@ -27,7 +27,6 @@ public class Game {
 	}
 
 	public void start(WorldManager manager) {
-		this.seconds = 0;
 		this.totalTime = 0;
 		this.blockgettercounter = 0;
 		this.worldManager = manager;
@@ -41,26 +40,29 @@ public class Game {
 	public void perSecond() {
 		totalTime++;
 		if (Lobby.status == GameStatus.STARTING) {
-			if (seconds == 0) {
+			if (Lobby.seconds == 1) {
+				Bukkit.getServer().broadcastMessage("0");
 				for (TurfPlayer player : Lobby.players.getAll().values()) {
 					player.canMove = false;
 				}
-			} else if (seconds != Phase.startCount.getSeconds()) {
+			} else if (Lobby.seconds != Phase.startCount.getSeconds()) {
 				displayStartGametitlecountdown();
-			} else {
+				Bukkit.getServer().broadcastMessage("1");
+			} else if(Lobby.seconds == Phase.startCount.getSeconds()) {
 				for (TurfPlayer player : Lobby.players.getAll().values()) {
 					player.canMove = true;
 				}
+				Bukkit.getServer().broadcastMessage("2");
+				Lobby.seconds = 0;
 				displayStartGametitle();
-				seconds = 0;
 				Lobby.updateStatus(GameStatus.IN_PROGRESS);
 				phase = Phase.n1;
 				handlePhases();
 			}
 		} else if (Lobby.status == GameStatus.IN_PROGRESS) {
-			if (seconds == phase.getSeconds()) {
+			if (Lobby.seconds == phase.getSeconds()) {
 				phase = Phase.valueOf("n" + (phase.getPhaseNumber() + 1));
-				seconds = 0;
+				Lobby.seconds = 0;
 				handlePhases();//give the items n such
 			} else {
 				handlePhases();//items n such
@@ -70,7 +72,7 @@ public class Game {
 
 	private void displayStartGametitlecountdown() {
 		for(TurfPlayer player : Lobby.players.getAll().values())
-			TitleAPI.sendTitle(player.getPlayer(), 0, 20, 0, "GAME STARTS IN", (Phase.startCount.getSeconds() - seconds) + " SECONDS");
+			TitleAPI.sendTitle(player.getPlayer(), 0, 20, 0, "GAME STARTS IN", (Phase.startCount.getSeconds() - Lobby.seconds) + " SECONDS");
 	}
 
 	private void displayStartGametitle() {
@@ -79,14 +81,14 @@ public class Game {
 	}
 
 	private void handlePhases() {
-		if (phase.getType() == Phase.PhaseType.BUILDING && seconds == 0) {//if it is a build phase starting.
+		if (phase.getType() == Phase.PhaseType.BUILDING && Lobby.seconds == 0) {//if it is a build phase starting.
 			for (TurfPlayer player : Lobby.players.getAll().values())
 				player.canVenture = false;
 			for (TurfPlayer player : Lobby.players.blueTeam.values())
 				player.getPlayer().getInventory().addItem(new ItemStack(Material.STAINED_CLAY, phase.getAmount(), Team.BLUE.color));
 			for (TurfPlayer player : Lobby.players.redTeam.values())
 				player.getPlayer().getInventory().addItem(new ItemStack(Material.STAINED_CLAY, phase.getAmount(), Team.RED.color));
-		} else if (phase.getType() == Phase.PhaseType.KILLING && seconds == 0) {//else if is killing phase starting
+		} else if (phase.getType() == Phase.PhaseType.KILLING && Lobby.seconds == 0) {//else if is killing phase starting
 			for (TurfPlayer player : Lobby.players.getAll().values()) {
 				player.setKitVenturing();
 				player.resetInventory();

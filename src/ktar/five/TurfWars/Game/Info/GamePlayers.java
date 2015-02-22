@@ -11,6 +11,9 @@ import ktar.five.TurfWars.Main;
 import ktar.five.TurfWars.Game.Player.Team;
 import ktar.five.TurfWars.Game.Player.TurfPlayer;
 
+import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
+
 public class GamePlayers {
 
     public Map<UUID, TurfPlayer> spectators, redTeam, blueTeam;
@@ -104,14 +107,21 @@ public class GamePlayers {
     public byte getTeamByte(TurfPlayer player) {
         return getPlayerTeam(player).color;
     }
+    
+    public byte getOtherTeamByte(TurfPlayer player){
+    	return getPlayerTeam(player).getOppositeTeam().color;
+    }
 
     public void putInTeam(Team team, TurfPlayer player) {
         if (team == Team.BLUE) {
             blueTeam.put(player.playerUUID, player);
+            player.getPlayer().getInventory().setHelmet(new ItemStack(Material.LAPIS_BLOCK));
         } else if (team == Team.RED) {
             redTeam.put(player.playerUUID, player);
+            player.getPlayer().getInventory().setHelmet(new ItemStack(Material.REDSTONE_BLOCK));
         }else if(team == Team.SPECTATOR){
         	spectators.put(player.playerUUID, player);
+            player.getPlayer().getInventory().setHelmet(new ItemStack(Material.GLASS));
         }
     }
     
