@@ -62,13 +62,13 @@ public class Lobby implements Listener{
 	}
 	
     private void createTimer() {
-        Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(Main.instance, new Runnable() {
+        new BukkitRunnable() {
             @Override
             public void run() {
             	perSecond();
             	Cooldown.handleCooldowns();
             }
-        }, 0L, 20L);
+        }.runTaskTimerAsynchronosly(Main.instance, 0L, 20L);
     }
     
     public void perSecond() {
