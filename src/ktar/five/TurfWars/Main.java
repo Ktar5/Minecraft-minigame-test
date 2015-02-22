@@ -99,6 +99,9 @@ public class Main extends JavaPlugin implements PluginMessageListener{
 			entities.get(i).setHealth(0d);
 			entities.remove(i);
 		}
+		if(!this.getConfig().getBoolean("isHub")){
+			Lobby.getGame().worldManager.resetMap();
+		}
 		lobby = null;
 		
 	}

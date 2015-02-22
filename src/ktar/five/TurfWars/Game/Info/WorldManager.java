@@ -49,14 +49,14 @@ public class WorldManager {
 
 		turfBlocks = new ArrayList<>();
 		placedBlocks = new ArrayList<>();
-		int xmin = Math.min(boxCorner2.getBlockX(), boxCorner1.getBlockZ());
+		int xmin = Math.min(boxCorner2.getBlockX(), boxCorner1.getBlockX());
 		int ymin = Math.min(boxCorner2.getBlockY(), boxCorner1.getBlockY());
 		int zmin = Math.min(boxCorner2.getBlockZ(), boxCorner1.getBlockZ());
-
-		int xmax = Math.min(boxCorner2.getBlockX(), boxCorner1.getBlockZ());
-		int ymax = Math.min(boxCorner2.getBlockY(), boxCorner1.getBlockY());
-		int zmax = Math.min(boxCorner2.getBlockZ(), boxCorner1.getBlockZ());
-
+		
+		int xmax = Math.max(boxCorner2.getBlockX(), boxCorner1.getBlockX());
+		int ymax = Math.max(boxCorner2.getBlockY(), boxCorner1.getBlockY());
+		int zmax = Math.max(boxCorner2.getBlockZ(), boxCorner1.getBlockZ());
+		
 		for(int x = xmin ; x <= xmax ; x++){
 			List<Location> blocks = new ArrayList<>();
 			for(int y = ymin ; y <= ymax ; y++){
@@ -70,15 +70,17 @@ public class WorldManager {
 		for(int i = 0 ; i < turfBlocks.size()/2 ; i++ ){
 			for(Location b : turfBlocks.get(i).blocks){
 				if(b.getBlock().getType().equals(Material.SPONGE)){
+					System.out.println("Worked2");
 					b.getBlock().setType(Material.STAINED_CLAY);
 					b.getBlock().setData(Team.BLUE.color);
 					b.getBlock().setMetadata("floor", new FixedMetadataValue(Main.instance, Team.BLUE));
 				}	
 			}
+			System.out.println(i);
 			turfBlocks.get(i).team = Team.BLUE;
 		}
 
-		for(int i = turfBlocks.size()-1 ; i > turfBlocks.size()/2 ; i-- ){
+		for(int i = turfBlocks.size()-1 ; i >= turfBlocks.size()/2 ; i-- ){
 			for(Location b : turfBlocks.get(i).blocks){
 				if(b.getBlock().getType().equals(Material.SPONGE)){
 					b.getBlock().setType(Material.STAINED_CLAY);
@@ -86,6 +88,7 @@ public class WorldManager {
 					b.getBlock().setMetadata("floor", new FixedMetadataValue(Main.instance, Team.RED));
 				}	
 			}
+			System.out.println(i);
 			turfBlocks.get(i).team = Team.RED;
 		}
 

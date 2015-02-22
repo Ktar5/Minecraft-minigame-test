@@ -57,7 +57,7 @@ public class EntityListener implements Listener {
 	public void onPlayerRightClickEntity(PlayerInteractEntityEvent event){
 		if(event.getRightClicked().hasMetadata("LobbyMob")){
 			LivingEntity entity = (LivingEntity) event.getRightClicked();
-			String string = entity.getMetadata("LobbyMob").get(0).toString();
+			String string = entity.getMetadata("LobbyMob").get(0).asString();
 			MobType type = MobType.valueOf(string);
 			TurfPlayer player = Lobby.players.getTurfPlayer(event.getPlayer().getUniqueId());
 			if (type.equals(MobType.BLUESHEEP) || type.equals(MobType.REDSHEEP)) {

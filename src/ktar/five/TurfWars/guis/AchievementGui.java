@@ -21,72 +21,72 @@ public class AchievementGui extends ItemMenu
 	public void initInventory() {
 		boolean master = true;
 		if (player.wins >= 1000) {
-			this.setItem(2, new TurfWarsStatsItem("Winner", new String[]{
+			this.setItem(0, new TurfWarsStatsItem("Winner", new String[]{
 					"You have " + player.wins + " wins!",
 					"You've unlocked this achievement at 1000 wins!"
 			}, true));
 		} else {
-			this.setItem(2, new TurfWarsStatsItem("Winner", new String[]{
+			this.setItem(0, new TurfWarsStatsItem("Winner", new String[]{
 					"You have " + player.wins + " wins!",
 					"You will unlock this once you reach 1000 wins!"
 			}, false));
 			master = false;
 		}
 		if (player.totalKills >= 1000) {
-			this.setItem(4, new TurfWarsStatsItem("Killer", new String[]{
+			this.setItem(2, new TurfWarsStatsItem("Killer", new String[]{
 					"You have " + player.totalKills + " kills!",
 					"You've unlocked this achievement at 1000 kills!"
 			}, true));
 		} else {
-			this.setItem(4, new TurfWarsStatsItem("Killer", new String[]{
+			this.setItem(2, new TurfWarsStatsItem("Killer", new String[]{
 					"You have " + player.totalKills + " kills!",
 					"You will unlock this once you reach 1000 kills!"
 			}, false));
 			master = false;
 		}
 		if (player.totalKills >= 10000) {
-			this.setItem(6, new TurfWarsStatsItem("Serial Killer", new String[]{
+			this.setItem(4, new TurfWarsStatsItem("Serial Killer", new String[]{
 					"You have " + player.totalKills + " kills!",
 					"You've unlocked this achievement at 10000 kills!"
 			}, true));
 		} else {
-			this.setItem(6, new TurfWarsStatsItem("Serial Killer", new String[]{
+			this.setItem(4, new TurfWarsStatsItem("Serial Killer", new String[]{
 					"You have " + player.totalKills + " kills!",
 					"You will unlock this once you reach 10000 kills!"
 			}, false));
 			master = false;
 		}
 		if (player.topKillsPerMatch >= 40) {
-			this.setItem(8, new TurfWarsStatsItem("Combo", new String[]{
+			this.setItem(6, new TurfWarsStatsItem("Combo", new String[]{
 					"You have " + player.topKillsPerMatch + " kills!",
 					"You've unlocked this achievement at 40 kills!"
 			}, true));
 		} else {
-			this.setItem(8, new TurfWarsStatsItem("Combo", new String[]{
+			this.setItem(6, new TurfWarsStatsItem("Combo", new String[]{
 					"You have " + player.topKillsPerMatch + " kills!",
 					"You will unlock this once you reach 40 kills!"
 			}, false));
 			master = false;
 		}
 		if (player.topKillsPerMatch >= 100) {
-			this.setItem(10, new TurfWarsStatsItem("God", new String[]{
+			this.setItem(8, new TurfWarsStatsItem("God", new String[]{
 					"You have " + player.topKillsPerMatch + " kills!",
 					"You've unlocked this achievement at 100 kills!"
 			}, true));
 		} else {
-			this.setItem(10, new TurfWarsStatsItem("God", new String[]{
+			this.setItem(8, new TurfWarsStatsItem("God", new String[]{
 					"You have " + player.topKillsPerMatch + " kills!",
 					"You will unlock this once you reach 100 kills!"
 			}, false));
 			master = false;
 		}
 		if (player.shortestGame <= 180) {
-			this.setItem(12, new TurfWarsStatsItem("Domination", new String[]{
+			this.setItem(10, new TurfWarsStatsItem("Domination", new String[]{
 					"You're shortest game: " + player.shortestGame + " seconds!",
 					"You've unlocked this by winning a game in under 3 minutes!"
 			}, true));
 		} else {
-			this.setItem(12, new TurfWarsStatsItem("Domination", new String[]{
+			this.setItem(10, new TurfWarsStatsItem("Domination", new String[]{
 					"You're shortest game: " + player.shortestGame + " seconds!",
 					"You will unlock this by winning a game in under 3 minutes!"
 			}, false));

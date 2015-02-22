@@ -7,6 +7,7 @@ import ktar.five.TurfWars.Lobby.Lobby;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
@@ -14,6 +15,12 @@ import org.bukkit.scoreboard.Scoreboard;
 public class Scoreboards {
 
     public static void getLobbyScoreboard(TurfPlayer p){
+		Player player = p.getPlayer();
+    	if (player.getScoreboard().getObjective(DisplaySlot.SIDEBAR) != null)
+		{
+			player.getScoreboard().getObjective(DisplaySlot.SIDEBAR).unregister();
+			player.getScoreboard().clearSlot(DisplaySlot.SIDEBAR);
+		}
         Scoreboard sb = Bukkit.getScoreboardManager().getNewScoreboard();
         Objective ob = sb.registerNewObjective("Turf", "dummy");
         ob.setDisplayName(Lobby.status == GameStatus.WAITING_FOR_PLAYERS
@@ -32,7 +39,14 @@ public class Scoreboards {
     }
 
     public static void getGameScoreboard(TurfPlayer p){
-        Scoreboard sb = Bukkit.getScoreboardManager().getNewScoreboard();
+		Player player = p.getPlayer();
+    	if (player.getScoreboard().getObjective(DisplaySlot.SIDEBAR) != null)
+		{
+			player.getScoreboard().getObjective(DisplaySlot.SIDEBAR).unregister();
+			player.getScoreboard().clearSlot(DisplaySlot.SIDEBAR);
+		}
+    	Scoreboard sb = Bukkit.getScoreboardManager().getNewScoreboard();
+    	p.getPlayer().setScoreboard(sb);
         Objective ob = sb.registerNewObjective("Turf", "dummy");
         ob.setDisplayName(ChatColor.BOLD + "" + ChatColor.BLUE + "SKYCRAFT");
         ob.setDisplaySlot(DisplaySlot.SIDEBAR);

@@ -14,7 +14,7 @@ import ktar.five.TurfWars.Game.Player.TurfPlayer;
 public class GamePlayers {
 
     public Map<UUID, TurfPlayer> spectators, redTeam, blueTeam;
-    public final int maxPerTeam = 8;
+    public final int maxPerTeam = 1;
 
     public GamePlayers() {
         this.redTeam = new HashMap<>();
