@@ -25,7 +25,6 @@ public class Main extends JavaPlugin {
 	public static MySQL sql = null;
 	Connection c = null;
 	public static Economy economy = null;
-	public static int id;
 
 	public static List<LivingEntity> entities;
 
@@ -67,25 +66,27 @@ public class Main extends JavaPlugin {
 			this.setupEconomy();
 		} else {
 			try {
-				id = sql.updateSQL("INSERT INTO GameStatus (status, playercount, name) VALUES ("
+				sql.updateSQL("INSERT INTO GameStatus (status, playercount, name) VALUES ("
 						+ GameStatus.RESTARTING.id
 						+ ", 0, '"
-						+ configuration.getString("serverid") + "')")[1];
+						+ configuration.getString("serverid") + "')");
 			} catch (SQLException | ClassNotFoundException e) {
 				e.printStackTrace();
 			}
+			new Lobby(configuration);
 			Bukkit.getServer().getPluginManager().registerEvents(new LobbyListeners(), this);
 			Bukkit.getServer().getPluginManager().registerEvents(new GameListeners(), this);
 			Bukkit.getServer().getPluginManager().registerEvents(new EntityListener(), this);
 		}
 		this.getCommand("turf").setExecutor(new Commands());
+
 	}
 
 	@Override
 	public void onDisable() {
 		instance = null;
 		try {
-			sql.updateSQL("DELETE FROM GameStatus WHERE id =" + id);
+			sql.updateSQL("DELETE FROM GameStatus WHERE name= '" + Lobby.serverid+"'");
 			sql.closeConnection();
 		} catch (SQLException | ClassNotFoundException e) {
 			e.printStackTrace();
@@ -103,7 +104,7 @@ public class Main extends JavaPlugin {
 		try {
 			sql.updateSQL("UPDATE GameStatus SET status=" + Lobby.status.id
 					+ ", playercount=" + Bukkit.getOnlinePlayers().length
-					+ ", name='" + Lobby.serverid + "' WHERE id=" + id);
+					+ ", name='" + Lobby.serverid + "' WHERE name= '" + Lobby.serverid+"'");
 		} catch (SQLException | ClassNotFoundException e) {
 			e.printStackTrace();
 		}

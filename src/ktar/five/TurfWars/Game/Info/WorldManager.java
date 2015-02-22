@@ -7,6 +7,7 @@ import ktar.five.TurfWars.Main;
 import ktar.five.TurfWars.Game.Player.Team;
 import ktar.five.TurfWars.Lobby.Lobby;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -55,10 +56,10 @@ public class WorldManager {
 		}
 		
 		for(int i = 0 ; i < turfBlocks.size() ; i++){
-			if(i <= turfBlocks.size()/2){
-				this.addClays(Team.BLUE, i);
+			if(i < turfBlocks.size()/2){
+				this.setTeam(Team.BLUE, i);
 			}else{
-				this.addClays(Team.RED, i);
+				this.setTeam(Team.RED, i);
 			}
 		}
 
@@ -92,21 +93,23 @@ public class WorldManager {
 
 	public void addClays(Team team, int num) {
 		if(team == Team.BLUE){
-			red -= num;
 			for(int i = 1 ; i <= num ; i++ ){
-				blue+=1;
-				setTeam(team, blue+i);
-				if(red <= 0){
+				blue++;
+				red--;
+				setTeam(team, blue);
+				if(red == 0){
 					Lobby.teamWon(team);
+					return;
 				}
 			}
 		}else if(team == Team.RED){
-			blue -= num;
 			for(int i = 1 ; i <= num ; i++ ){
+				blue--;
 				red++;
-				setTeam(team, turfBlocks.size()-1-red);
-				if(blue <= 0){
+				setTeam(team, (turfBlocks.size()-1)-red);
+				if(blue == 0){
 					Lobby.teamWon(team);
+					return;
 				}
 			}
 		}
@@ -130,18 +133,18 @@ public class WorldManager {
 	}
 
 	public void setTeam(Team team, int index){
-		this.turfBlocks.get(index).team = team;
+		turfBlocks.get(index).team = team;
 		for(Location b : turfBlocks.get(index).blocks){
-			turfBlocks.get(index).team = team;
 			if(b.getBlock().getType().equals(Material.STAINED_CLAY) && b.getBlock().hasMetadata("floor")){
 				b.getBlock().removeMetadata("floor", Main.instance);	
 			}else if(b.getBlock().getType().equals(Material.SPONGE)){
 				b.getBlock().setType(Material.STAINED_CLAY);
 			}else{
-				return;
+				continue;
 			}
 			b.getBlock().setData(team.color);
 			b.getBlock().setMetadata("floor", new FixedMetadataValue(Main.instance, team));
+			Bukkit.getServer().broadcastMessage(String.valueOf(index));
 		}
 	}
 
