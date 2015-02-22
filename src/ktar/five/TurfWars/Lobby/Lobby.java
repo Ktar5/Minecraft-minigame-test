@@ -91,6 +91,7 @@ public class Lobby implements Listener{
                 updateStatus(GameStatus.WAITING_FOR_PLAYERS);
             } else if (players.gameFull() && seconds == lobbyCountdown) {
                 this.startGame();
+                updateStatus(GameStatus.STARTING);
             }
         } else if (status == GameStatus.STARTING || status == GameStatus.IN_PROGRESS){
         	game.perSecond();
