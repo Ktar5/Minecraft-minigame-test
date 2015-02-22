@@ -21,6 +21,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
+import org.bukkit.scheduler.BukkitRunnable;
 
 public class Lobby implements Listener{
 
@@ -61,15 +62,15 @@ public class Lobby implements Listener{
 		this.createTimer();
 	}
 	
-    private void createTimer() {
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-            	perSecond();
-            	Cooldown.handleCooldowns();
-            }
-        }.runTaskTimerAsynchronosly(Main.instance, 0L, 20L);
-    }
+	private void createTimer() {
+		Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(Main.instance, new Runnable() {
+			@Override
+			public void run() {
+				perSecond();
+				Cooldown.handleCooldowns();
+			}
+		}, 0L, 20L);
+	}
     
     public void perSecond() {
         seconds++;
@@ -91,6 +92,7 @@ public class Lobby implements Listener{
                 updateStatus(GameStatus.WAITING_FOR_PLAYERS);
             } else if (players.gameFull() && seconds == lobbyCountdown) {
                 this.startGame();
+                seconds =0;
                 updateStatus(GameStatus.STARTING);
             }
         } else if (status == GameStatus.STARTING || status == GameStatus.IN_PROGRESS){
