@@ -30,10 +30,14 @@ public class Game {
 		this.totalTime = 0;
 		this.blockgettercounter = 0;
 		this.worldManager = manager;
-		for (TurfPlayer p : Lobby.players.redTeam.values())
+		for (TurfPlayer p : Lobby.players.redTeam.values()){
 			p.getPlayer().teleport(worldManager.redSpawn);
-		for (TurfPlayer p : Lobby.players.blueTeam.values())
+			player.resetInventory();
+		}
+		for (TurfPlayer p : Lobby.players.blueTeam.values()){
 			p.getPlayer().teleport(worldManager.blueSpawn);
+			player.resetInventory();
+		}
 		phase = Phase.startCount;
 	}
 
