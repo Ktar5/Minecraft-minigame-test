@@ -61,9 +61,9 @@ public class EntityListener implements Listener {
 			MobType type = MobType.valueOf(string);
 			TurfPlayer player = Lobby.players.getTurfPlayer(event.getPlayer().getUniqueId());
 			if (type.equals(MobType.BLUESHEEP) || type.equals(MobType.REDSHEEP)) {
-				if(!Lobby.players.switchTeam(Lobby.players.getTurfPlayer(event.getPlayer().getUniqueId()))){
-                    event.getPlayer().sendMessage("Team full");
-                }
+				if(!Lobby.players.switchTeam(player)){
+                		    event.getPlayer().sendMessage("Team full");
+                		}
 			}else if(type.equals(MobType.MARKSMAN)){
 				player.kit = Kit.MARKSMAN;
 			}else if (type.equals(MobType.INFILTRATOR)){
