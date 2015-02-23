@@ -24,5 +24,13 @@ public enum GameStatus {
         }
         return GameStatus.ERROR;
     }
+    
+    @Override
+	public boolean equals(Object comp){
+		if(comp instanceof GameStatus){
+			return ((GameStatus)comp).id == this.id;
+		}
+		return false;
+	}
 
 }
