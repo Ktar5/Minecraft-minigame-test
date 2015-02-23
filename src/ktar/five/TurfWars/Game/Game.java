@@ -40,19 +40,20 @@ public class Game {
 	public void perSecond() {
 		totalTime++;
 		if (Lobby.status == GameStatus.STARTING) {
-			if (Lobby.seconds == 1) {
+			if (Lobby.seconds == 0) {
 				Bukkit.getServer().broadcastMessage("0");
 				for (TurfPlayer player : Lobby.players.getAll().values()) {
 					player.canMove = false;
 				}
+				displayStartGametitlecountdown();
 			} else if (Lobby.seconds != Phase.startCount.getSeconds()) {
 				displayStartGametitlecountdown();
-				Bukkit.getServer().broadcastMessage("1");
+				Bukkit.getServer().broadcastMessage(Lobby.seconds);
 			} else if(Lobby.seconds == Phase.startCount.getSeconds()) {
 				for (TurfPlayer player : Lobby.players.getAll().values()) {
 					player.canMove = true;
 				}
-				Bukkit.getServer().broadcastMessage("2");
+				Bukkit.getServer().broadcastMessage(Lobby.seconds);
 				Lobby.seconds = 0;
 				displayStartGametitle();
 				Lobby.updateStatus(GameStatus.IN_PROGRESS);
@@ -72,12 +73,12 @@ public class Game {
 
 	private void displayStartGametitlecountdown() {
 		for(TurfPlayer player : Lobby.players.getAll().values())
-			TitleAPI.sendTitle(player.getPlayer(), 0, 20, 0, "GAME STARTS IN", (Phase.startCount.getSeconds() - Lobby.seconds) + " SECONDS");
+			TitleAPI.sendTitle(player.getPlayer(), 0, 15, 3, "GAME STARTS IN", (Phase.startCount.getSeconds() - Lobby.seconds) + " SECONDS");
 	}
 
 	private void displayStartGametitle() {
 		for(TurfPlayer player : Lobby.players.getAll().values())
-			TitleAPI.sendTitle(player.getPlayer(), 0, 20, 0, "GAME IS STARTING", "GOOD LUCK");
+			TitleAPI.sendTitle(player.getPlayer(), 0, 15, 3, "GAME IS STARTING", "GOOD LUCK");
 	}
 
 	private void handlePhases() {
