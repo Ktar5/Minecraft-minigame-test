@@ -96,7 +96,7 @@ public class WorldManager {
 			for(int i = 1 ; i <= num ; i++ ){
 				blue++;
 				red--;
-				setTeam(team, blue);
+				setTeam(team, blue+1);
 				if(red == 0){
 					Lobby.teamWon(team);
 					return;
