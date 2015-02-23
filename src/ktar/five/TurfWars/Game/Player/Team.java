@@ -26,4 +26,13 @@ public enum Team {
     		return null;
     	}
     }
+    
+    @Override
+	public boolean equals(Object comp){
+		if(comp instanceof Team){
+			return ((Team)comp).toString() == this.toString();
+		}
+		return false;
+	}
+	
 }
