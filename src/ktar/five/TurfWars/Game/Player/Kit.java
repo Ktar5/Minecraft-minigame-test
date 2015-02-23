@@ -44,7 +44,14 @@ public enum Kit {
 	} 
 		Its not really needed...
 	*/
-
+	
+	    @Override
+	public boolean equals(Object comp){
+		if(comp instanceof Kit){
+			return ((Kit)comp).toString() == this.toString();
+		}
+		return false;
+	}
 
 
 
