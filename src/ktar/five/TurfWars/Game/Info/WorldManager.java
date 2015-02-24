@@ -94,7 +94,7 @@ public class WorldManager {
 	public void addClays(Team team, int num) {
 		if(team == Team.BLUE){
 			for(int i = 1 ; i <= num ; i++ ){
-				blue++;
+				++blue;
 				red--;
 				setTeam(team, blue+1);
 				if(red == 0){
@@ -105,7 +105,7 @@ public class WorldManager {
 		}else if(team == Team.RED){
 			for(int i = 1 ; i <= num ; i++ ){
 				blue--;
-				red++;
+				++red;
 				setTeam(team, (turfBlocks.size()-1)-red);
 				if(blue == 0){
 					Lobby.teamWon(team);

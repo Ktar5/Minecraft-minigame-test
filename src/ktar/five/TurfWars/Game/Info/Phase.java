@@ -37,14 +37,6 @@ public enum Phase {
     public int getAmount() {
         return amount;
     }
-    
-    @Override
-	public boolean equals(Object comp){
-		if(comp instanceof Phase){
-			return ((Phase)comp).getPhaseNumber() == this.getPhaseNumber();
-		}
-		return false;
-	}
 
     public enum PhaseType {
 
@@ -52,17 +44,9 @@ public enum Phase {
         KILLING,
         START_COUNT;
         
-        public PhaseType(){
+        private PhaseType(){
             
         }
-        
-        @Override
-	    public boolean equals(Object comp){
-		if(comp instanceof PhaseType){
-			return ((PhaseType)comp).toString() == this.toString();
-		}
-		return false;
-	}
 
     }
 

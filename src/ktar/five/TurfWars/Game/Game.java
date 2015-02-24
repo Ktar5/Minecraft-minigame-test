@@ -32,11 +32,11 @@ public class Game {
 		this.worldManager = manager;
 		for (TurfPlayer p : Lobby.players.redTeam.values()){
 			p.getPlayer().teleport(worldManager.redSpawn);
-			player.resetInventory();
+			p.resetInventory();
 		}
 		for (TurfPlayer p : Lobby.players.blueTeam.values()){
 			p.getPlayer().teleport(worldManager.blueSpawn);
-			player.resetInventory();
+			p.resetInventory();
 		}
 		phase = Phase.startCount;
 	}
@@ -52,12 +52,12 @@ public class Game {
 				displayStartGametitlecountdown();
 			} else if (Lobby.seconds != Phase.startCount.getSeconds()) {
 				displayStartGametitlecountdown();
-				Bukkit.getServer().broadcastMessage(Lobby.seconds);
+				Bukkit.getServer().broadcastMessage(String.valueOf(Lobby.seconds));
 			} else if(Lobby.seconds == Phase.startCount.getSeconds()) {
 				for (TurfPlayer player : Lobby.players.getAll().values()) {
 					player.canMove = true;
 				}
-				Bukkit.getServer().broadcastMessage(Lobby.seconds);
+				Bukkit.getServer().broadcastMessage(String.valueOf(Lobby.seconds));
 				Lobby.seconds = 0;
 				displayStartGametitle();
 				Lobby.updateStatus(GameStatus.IN_PROGRESS);
