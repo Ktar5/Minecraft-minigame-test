@@ -3,6 +3,7 @@ package ktar.five.TurfWars.Game;
 import java.util.UUID;
 
 import ktar.five.TurfWars.Main;
+import ktar.five.TurfWars.MessageStorage;
 import ktar.five.TurfWars.Game.Cooling.TurfEvent;
 import ktar.five.TurfWars.Game.Info.GameStatus;
 import ktar.five.TurfWars.Game.Info.Phase.PhaseType;
@@ -12,12 +13,16 @@ import ktar.five.TurfWars.Game.Player.TurfPlayer;
 import ktar.five.TurfWars.Lobby.Lobby;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -26,6 +31,7 @@ import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.util.BlockIterator;
 
 public class GameListeners implements Listener{
 
@@ -45,6 +51,16 @@ public class GameListeners implements Listener{
 			}
 		}
 	}
+	
+	@EventHandler
+	public void playerDestroyBlock(BlockBreakEvent event){
+		if(Lobby.players.playerInGame(event.getPlayer().getUniqueId()) && Lobby.status == GameStatus.IN_PROGRESS){
+			if(event.getBlock().hasMetadata("floor")){
+				event.setCancelled(true);
+			}
+		}
+	}
+	
 	@EventHandler
 	public void entityHitByOtherEntity(EntityDamageByEntityEvent event) {
 		if (event.getEntity() instanceof Player) {
@@ -60,8 +76,11 @@ public class GameListeners implements Listener{
 						TurfPlayer player = Lobby.players.getAll().get(damager.getUniqueId());
 						player.addKill();
 						damaged.setHealth(20D);
-						Lobby.getGame().playerDied(damaged, "penetration of " + (Lobby.players.getPlayerTeam(player).equals(Team.RED) ? "&4" : "&b") + player.getPlayer().getName().toUpperCase() + "&7's sword");
+						Lobby.getGame().playerDied(damaged, MessageStorage.get("swordDeath").replaceAll("<player>",
+								((Lobby.players.getPlayerTeam(player).equals(Team.RED) ? "&4" : "&b")
+										+ player.getPlayer().getName().toUpperCase())));
 					}
+					
 				}else if (event.getCause().equals(DamageCause.PROJECTILE) && event.getDamager() instanceof Arrow){
 					Arrow arrow = (Arrow) event.getDamager();
 					Player damager = Bukkit.getPlayer((UUID) arrow.getMetadata("Arrow").get(0).value());
@@ -70,11 +89,12 @@ public class GameListeners implements Listener{
 					} else if (Lobby.players.areOnSameTeam(damaged.getUniqueId(), damager.getUniqueId())) {
 						event.setDamage(0D);
 						event.setCancelled(true);
-					}else if (((Damageable) damaged).getHealth() <= 0) {
+					}else{
 						TurfPlayer player = Lobby.players.getAll().get(damager.getUniqueId());
 						player.addKill();
-						damaged.setHealth(20D);
-						Lobby.getGame().playerDied(damaged, "getting hit with " + (Lobby.players.getPlayerTeam(player).equals(Team.RED) ? "&4" : "&b") + player.getPlayer().getName().toUpperCase() + "&7's arrow in the knee!");
+						Lobby.getGame().playerDied(damaged, MessageStorage.get("arrowDeath").replaceAll("<player>",
+								((Lobby.players.getPlayerTeam(player).equals(Team.RED) ? "&4" : "&b")
+										+ player.getPlayer().getName().toUpperCase())));
 					}
 				}
 			}
@@ -95,7 +115,7 @@ public class GameListeners implements Listener{
 					event.setDamage(0D);
 				} else if (cause.equals(DamageCause.VOID)) {
 					event.setDamage(0D);
-					Lobby.getGame().playerDied(player, "&8FAAAaaaalllliinngg...");
+					Lobby.getGame().playerDied(player, MessageStorage.get("voidDeath"));
 				} else if (cause.equals(DamageCause.FIRE_TICK)){
 					event.setDamage(0D);
 				}
@@ -108,11 +128,22 @@ public class GameListeners implements Listener{
 		Player shooter = Bukkit.getPlayer((UUID) event.getEntity().getMetadata("Arrow").get(0).value());
 		if(Lobby.players.playerInGame(shooter.getUniqueId()) && Lobby.status == GameStatus.IN_PROGRESS){
 			if(event.getEntity().isOnGround()){
-				Lobby.getGame().worldManager.removeIfIsPlacedBlock(event.getEntity().getLocation().getBlock());
-				Lobby.players.getTurfPlayer(shooter.getUniqueId()).brokeBlock();
+			    World world = event.getEntity().getWorld();
+			    BlockIterator iterator = new BlockIterator(world, 
+			    		event.getEntity().getLocation().toVector(), 
+			    		event.getEntity().getVelocity().normalize(), 0, 4);
+			    Block hitBlock = null;
+			    while(iterator.hasNext()) {
+			        hitBlock = iterator.next();
+			        if(hitBlock.getType() != Material.AIR){ //Check all non-solid blockid's here.
+			            break;
+			        }
+			    }
+				if(hitBlock.getType() == Material.WOOL){
+					Lobby.getGame().worldManager.removeIfIsPlacedBlock(hitBlock);
+					Lobby.players.getTurfPlayer(shooter.getUniqueId()).brokeBlock();	
+				}
 			}
-
-			event.getEntity().getLocation();
 		}
 	}
 
@@ -124,11 +155,11 @@ public class GameListeners implements Listener{
 			switch (event.getTo().getBlock().getType()){
 			case LAVA:
 			case STATIONARY_LAVA:
-				Lobby.getGame().playerDied(p.getPlayer(), "&6L&eI&6C&eK&6I&eN&6' &eL&6A&eV&6A");
+				Lobby.getGame().playerDied(p.getPlayer(), MessageStorage.get("lavaDeath"));
 				break;
 			case WATER:
 			case STATIONARY_WATER:
-				Lobby.getGame().playerDied(p.getPlayer(), "3F&bE&3A&bR &3O&bF &3W&bA&3T&bE&3R&");
+				Lobby.getGame().playerDied(p.getPlayer(), MessageStorage.get("waterDeath"));
 				break;
 			default:
 				break;

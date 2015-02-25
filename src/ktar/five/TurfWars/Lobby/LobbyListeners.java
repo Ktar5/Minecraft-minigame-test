@@ -11,6 +11,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.potion.PotionEffectType;
 
 public class LobbyListeners implements Listener{
 	
@@ -24,6 +25,7 @@ public class LobbyListeners implements Listener{
 			players.putInTeam(Team.SPECTATOR, player);
 		}
 		event.getPlayer().teleport(Lobby.info.lobbySpawn);
+		event.getPlayer().removePotionEffect(PotionEffectType.SLOW);
 		Main.updateGameStatus();
 	}
 	
@@ -31,6 +33,7 @@ public class LobbyListeners implements Listener{
 	public void onPlayerDisconnect(PlayerQuitEvent event){
 		GamePlayers players = Lobby.players;
 		TurfPlayer player = players.getTurfPlayer(event.getPlayer().getUniqueId());
+		event.getPlayer().removePotionEffect(PotionEffectType.SLOW);
 		event.getPlayer().setScoreboard(Bukkit.getScoreboardManager().getNewScoreboard());
 		if(players.playerInGame(player.playerUUID)){
 			players.remove(player);

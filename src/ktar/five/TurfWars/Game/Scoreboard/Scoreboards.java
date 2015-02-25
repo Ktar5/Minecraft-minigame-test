@@ -15,12 +15,6 @@ import org.bukkit.scoreboard.Scoreboard;
 public class Scoreboards {
 
     public static void getLobbyScoreboard(TurfPlayer p){
-		Player player = p.getPlayer();
-    	if (player.getScoreboard().getObjective(DisplaySlot.SIDEBAR) != null)
-		{
-			player.getScoreboard().getObjective(DisplaySlot.SIDEBAR).unregister();
-			player.getScoreboard().clearSlot(DisplaySlot.SIDEBAR);
-		}
         Scoreboard sb = Bukkit.getScoreboardManager().getNewScoreboard();
         Objective ob = sb.registerNewObjective("Turf", "dummy");
         ob.setDisplayName(Lobby.status == GameStatus.WAITING_FOR_PLAYERS
@@ -39,12 +33,6 @@ public class Scoreboards {
     }
 
     public static void getGameScoreboard(TurfPlayer p){
-		Player player = p.getPlayer();
-    	if (player.getScoreboard().getObjective(DisplaySlot.SIDEBAR) != null)
-		{
-			player.getScoreboard().getObjective(DisplaySlot.SIDEBAR).unregister();
-			player.getScoreboard().clearSlot(DisplaySlot.SIDEBAR);
-		}
     	Scoreboard sb = Bukkit.getScoreboardManager().getNewScoreboard();
     	p.getPlayer().setScoreboard(sb);
         Objective ob = sb.registerNewObjective("Turf", "dummy");
@@ -55,8 +43,13 @@ public class Scoreboards {
         ob.getScore("  ").setScore(13);
         ob.getScore(ChatColor.BOLD + "" + ChatColor.WHITE + Lobby.info.red + ChatColor.RED + " Red").setScore(12);
         ob.getScore("   ").setScore(11);
-        ob.getScore(Lobby.getGame().phase.getType() == Phase.PhaseType.BUILDING ? ChatColor.BOLD + "" + ChatColor.YELLOW +  "Build Time" 
-        		: ChatColor.BOLD + "" + ChatColor.DARK_RED + "Combat Time").setScore(10);
+        ob.getScore(Lobby.getGame().phase.getType() == Phase.PhaseType.BUILDING ?
+        		ChatColor.BOLD + "" + ChatColor.YELLOW +  "Build Time" 
+        		:
+        		Lobby.getGame().phase.getType() == Phase.PhaseType.KILLING ?
+        				ChatColor.BOLD + "" + ChatColor.DARK_RED + "Combat Time" 
+        				:
+        				ChatColor.BOLD + "" + ChatColor.GOLD + "Starting Count").setScore(10);
         ob.getScore(String.valueOf(Lobby.getGame().phase.getSeconds() - Lobby.seconds)).setScore(9);
         p.getPlayer().setScoreboard(sb);
     }

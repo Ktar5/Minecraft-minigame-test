@@ -1,17 +1,20 @@
 package ktar.five.TurfWars.Game;
 
+import ktar.five.TurfWars.MessageStorage;
+import ktar.five.TurfWars.Game.Cooling.Cooldown;
 import ktar.five.TurfWars.Game.Info.GameStatus;
 import ktar.five.TurfWars.Game.Info.Phase;
+import ktar.five.TurfWars.Game.Info.Phase.PhaseType;
 import ktar.five.TurfWars.Game.Info.WorldManager;
 import ktar.five.TurfWars.Game.Player.Team;
 import ktar.five.TurfWars.Game.Player.TurfPlayer;
 import ktar.five.TurfWars.Lobby.Lobby;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffectType;
 
 import com.connorlinfoot.titleapi.TitleAPI;
 
@@ -45,19 +48,16 @@ public class Game {
 		totalTime++;
 		if (Lobby.status == GameStatus.STARTING) {
 			if (Lobby.seconds == 0) {
-				Bukkit.getServer().broadcastMessage("0");
 				for (TurfPlayer player : Lobby.players.getAll().values()) {
 					player.canMove = false;
 				}
 				displayStartGametitlecountdown();
 			} else if (Lobby.seconds != Phase.startCount.getSeconds()) {
 				displayStartGametitlecountdown();
-				Bukkit.getServer().broadcastMessage(String.valueOf(Lobby.seconds));
 			} else if(Lobby.seconds == Phase.startCount.getSeconds()) {
 				for (TurfPlayer player : Lobby.players.getAll().values()) {
 					player.canMove = true;
 				}
-				Bukkit.getServer().broadcastMessage(String.valueOf(Lobby.seconds));
 				Lobby.seconds = 0;
 				displayStartGametitle();
 				Lobby.updateStatus(GameStatus.IN_PROGRESS);
@@ -76,13 +76,16 @@ public class Game {
 	}
 
 	private void displayStartGametitlecountdown() {
+		int n = (Phase.startCount.getSeconds() - Lobby.seconds);
 		for(TurfPlayer player : Lobby.players.getAll().values())
-			TitleAPI.sendTitle(player.getPlayer(), 0, 15, 3, "GAME STARTS IN", (Phase.startCount.getSeconds() - Lobby.seconds) + " SECONDS");
+			TitleAPI.sendTitle(player.getPlayer(), 0, 19, 0,
+					MessageStorage.get("countdown").replaceAll("<seconds>", String.valueOf(n)), 
+					MessageStorage.get("countdown").replaceAll("<seconds>", String.valueOf(n)));
 	}
 
 	private void displayStartGametitle() {
 		for(TurfPlayer player : Lobby.players.getAll().values())
-			TitleAPI.sendTitle(player.getPlayer(), 0, 15, 3, "GAME IS STARTING", "GOOD LUCK");
+			TitleAPI.sendTitle(player.getPlayer(), 0, 19, 0, MessageStorage.get("startGame"), MessageStorage.get("startGameSub"));
 	}
 
 	private void handlePhases() {
@@ -90,9 +93,9 @@ public class Game {
 			for (TurfPlayer player : Lobby.players.getAll().values())
 				player.canVenture = false;
 			for (TurfPlayer player : Lobby.players.blueTeam.values())
-				player.getPlayer().getInventory().addItem(new ItemStack(Material.STAINED_CLAY, phase.getAmount(), Team.BLUE.color));
+				player.getPlayer().getInventory().addItem(new ItemStack(Material.WOOL, phase.getAmount(), Team.BLUE.color));
 			for (TurfPlayer player : Lobby.players.redTeam.values())
-				player.getPlayer().getInventory().addItem(new ItemStack(Material.STAINED_CLAY, phase.getAmount(), Team.RED.color));
+				player.getPlayer().getInventory().addItem(new ItemStack(Material.WOOL, phase.getAmount(), Team.RED.color));
 		} else if (phase.getType() == Phase.PhaseType.KILLING && Lobby.seconds == 0) {//else if is killing phase starting
 			for (TurfPlayer player : Lobby.players.getAll().values()) {
 				player.setKitVenturing();
@@ -125,20 +128,29 @@ public class Game {
 	}
 
 	public void playerDied(Player p, String message) {
+		if(Cooldown.isCooling(p.getUniqueId(), "death")){
+			return;
+		}else{
+			Cooldown.add(p.getUniqueId(), "death", 5);
+		}
 		p.setHealth(20D);
 		p.setFireTicks(0);
 		TurfPlayer player = Lobby.players.getAll().get(p.getUniqueId());
 		Team team = Lobby.players.getPlayerTeam(player);
+		
+		int n = phase.getType() == PhaseType.BUILDING ? 1 : phase.getAmount();
 		if (team == Team.BLUE) {
 			p.teleport(worldManager.blueSpawn);
-			worldManager.addClays(Team.RED, phase.getAmount());
+			worldManager.addClays(Team.RED, n);
 		} else if (team == Team.RED) {
 			p.teleport(worldManager.redSpawn);
-			worldManager.addClays(Team.BLUE, phase.getAmount());
+			worldManager.addClays(Team.BLUE, n);
 		}
-		p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&1&lDeath>&r &c" + p.getName().toUpperCase() + "&7 was killed by " + message));
+		p.sendMessage(MessageStorage.get("deathFormat").replaceAll("<type>", message).replaceAll("<player>",
+						team.equals(Team.RED) ? "&4" : "&b") + p.getName().toUpperCase());
 		player.addDeath();
 		player.resetInventory();
+		p.removePotionEffect(PotionEffectType.SLOW);
 	}
 	
 }

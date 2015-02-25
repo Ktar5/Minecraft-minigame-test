@@ -17,7 +17,6 @@ public class GenericUtils {
 	}
 
 	public static Location configToLocation(ConfigurationSection section, World world){
-		System.out.println(section.getString("x") + "   " + section.getString("y") + "   " + section.getString("z"));
 		return new Location (
 				world,
 				Double.valueOf(section.getString("x")),

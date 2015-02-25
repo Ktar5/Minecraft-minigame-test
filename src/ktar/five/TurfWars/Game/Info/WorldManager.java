@@ -69,7 +69,7 @@ public class WorldManager {
 	public boolean removeIfIsPlacedBlock(Block block) {
 		if (placedBlocks.contains(block.getLocation())) {
 			placedBlocks.remove(block.getLocation());
-			block.breakNaturally();
+			block.setType(Material.AIR);
 			return true;
 		}else{
 			return false;
@@ -96,7 +96,7 @@ public class WorldManager {
 			for(int i = 1 ; i <= num ; i++ ){
 				++blue;
 				red--;
-				setTeam(team, blue+1);
+				setTeam(team, blue-1);
 				if(red == 0){
 					Lobby.teamWon(team);
 					return;
@@ -106,7 +106,7 @@ public class WorldManager {
 			for(int i = 1 ; i <= num ; i++ ){
 				blue--;
 				++red;
-				setTeam(team, (turfBlocks.size()-1)-red);
+				setTeam(team, (turfBlocks.size())-red);
 				if(blue == 0){
 					Lobby.teamWon(team);
 					return;
@@ -119,10 +119,8 @@ public class WorldManager {
 		return red >= blue ? Team.RED : Team.BLUE;
 	}
 
-	public void resetMap(){
-		for(Location block : placedBlocks){
-			block.getBlock().setType(Material.AIR);
-		}
+	
+	public void reset(){
 		for(Blocks block : turfBlocks){
 			for(Location loc : block.blocks){
 				if(loc.getBlock().getType().equals(Material.STAINED_CLAY)){
@@ -130,6 +128,20 @@ public class WorldManager {
 				}
 			}
 		}
+	}
+	
+	public void resetMap(){
+		for(Location block : placedBlocks){
+			block.getBlock().setType(Material.AIR);
+		}
+		for(int i = 0 ; i < turfBlocks.size() ; i++){
+			if(i < turfBlocks.size()/2){
+				this.setTeam(Team.BLUE, i);
+			}else{
+				this.setTeam(Team.RED, i);
+			}
+		}
+		blue = red = turfBlocks.size()/2;
 	}
 
 	public void setTeam(Team team, int index){
@@ -144,7 +156,13 @@ public class WorldManager {
 			}
 			b.getBlock().setData(team.color);
 			b.getBlock().setMetadata("floor", new FixedMetadataValue(Main.instance, team));
-			Bukkit.getServer().broadcastMessage(String.valueOf(index));
+			
+			for(Location loc : placedBlocks){
+				if(loc.getBlockX() == b.getBlockX()){
+					loc.getBlock().setData(team.color);
+				}
+			}
+			
 		}
 	}
 

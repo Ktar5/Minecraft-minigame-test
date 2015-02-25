@@ -76,4 +76,47 @@ lobbyOptions:
     lobbySpawn:
       x: '-8.2'
       y: '5'
-      z: '7'      
+      z: '7'   
+messages:
+  teamfull: ''
+  purchaseSuccess: ''
+  kitSwitchSuccess: ''
+  notEnoughMoney: ''
+  voidDeath: ''
+  lavaDeath: ''
+  waterDeath: ''
+  
+  ##<player>
+  swordDeath: ''
+  arrowDeath: ''
+  
+  ##<type> <player>
+  deathFormat: ''
+  
+  startGame: ''
+  startGameSub: ''
+  
+  ##<seconds>
+  countdown: ''
+  countdownSub: ''
+  
+  ##<winteam> <looseteam> <time>
+  winTitle: ''
+  winTitleSub: ''
+  looseTitle: ''
+  looseTitleSub: ''
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  

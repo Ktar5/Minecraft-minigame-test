@@ -5,6 +5,7 @@ import java.util.List;
 
 import ktar.five.TurfWars.GenericUtils;
 import ktar.five.TurfWars.Main;
+import ktar.five.TurfWars.MessageStorage;
 import ktar.five.TurfWars.Game.Game;
 import ktar.five.TurfWars.Game.Cooling.Cooldown;
 import ktar.five.TurfWars.Game.Info.GamePlayers;
@@ -15,12 +16,15 @@ import ktar.five.TurfWars.Game.Player.TurfPlayer;
 import ktar.five.TurfWars.Game.Scoreboard.Scoreboards;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
+
+import com.connorlinfoot.titleapi.TitleAPI;
 
 public class Lobby implements Listener{
 
@@ -93,6 +97,7 @@ public class Lobby implements Listener{
                 this.startGame();
                 seconds = 0;
                 updateStatus(GameStatus.STARTING);
+                game.perSecond();
             }
         } else if (status == GameStatus.STARTING || status == GameStatus.IN_PROGRESS){
         	game.perSecond();
@@ -131,6 +136,7 @@ public class Lobby implements Listener{
 
 			player.canMove = false;
 			player.canVenture = true;
+			displayWinTitle(p,team);
 			p.teleport(info.winning);
 		}
 		for(TurfPlayer player : players.getTurfPlayers(team, true).values()){
@@ -140,11 +146,34 @@ public class Lobby implements Listener{
 
 			player.canMove = false;
 			player.canVenture = true;
+			displayLooseTitle(p,team);
 			p.teleport(info.loosing);
 		}
 		seconds = 0;
 	}
 
+	public static void displayWinTitle(Player p, Team win){
+		TitleAPI.sendTitle(p, 20, 100, 10,
+				convertToEndGameTitle(MessageStorage.get("winTitle"), win),
+				convertToEndGameTitle(MessageStorage.get("winTitleSub"), win));
+	}
+	
+	public static void displayLooseTitle(Player p, Team win){
+		TitleAPI.sendTitle(p, 20, 100, 10,
+				convertToEndGameTitle(MessageStorage.get("looseTitle"), win),
+				convertToEndGameTitle(MessageStorage.get("looseTitleSub"), win));
+	}
+	
+	public static String convertToEndGameTitle(String string, Team win){
+		return string.replaceAll("<winteam>", (win == Team.BLUE ?
+				ChatColor.AQUA : ChatColor.RED)
+				+ win.toString())
+		.replaceAll("<looseteam>", (win.getOppositeTeam() == Team.BLUE ?
+				ChatColor.AQUA : ChatColor.RED)
+				+ win.getOppositeTeam().toString())
+		.replaceAll("<time>", String.valueOf(game.totalTime));
+	}
+	
 	public static void updateStatus(GameStatus newstatus) {
 		status = newstatus;
 		Main.updateGameStatus();

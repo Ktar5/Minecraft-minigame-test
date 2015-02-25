@@ -1,9 +1,11 @@
 package ktar.five.TurfWars;
 
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import ktar.five.TurfWars.Game.GameListeners;
 import ktar.five.TurfWars.Game.Info.GameStatus;
@@ -59,9 +61,10 @@ public class Main extends JavaPlugin {
 
 		this.getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
 
+		new MessageStorage(configuration.getConfigurationSection("messages"));
+		
 		if (this.getConfig().getBoolean("isHub")) {
 			new Hub(this.getConfig());
-			Bukkit.getServer().getPluginManager().registerEvents(new EntityListener(), this);
 			Bukkit.getServer().getPluginManager().registerEvents(new HubListeners(), this);
 			this.setupEconomy();
 		} else {
@@ -76,8 +79,8 @@ public class Main extends JavaPlugin {
 			new Lobby(configuration);
 			Bukkit.getServer().getPluginManager().registerEvents(new LobbyListeners(), this);
 			Bukkit.getServer().getPluginManager().registerEvents(new GameListeners(), this);
-			Bukkit.getServer().getPluginManager().registerEvents(new EntityListener(), this);
 		}
+		Bukkit.getServer().getPluginManager().registerEvents(new EntityListener(), this);
 		this.getCommand("turf").setExecutor(new Commands());
 
 	}
@@ -96,7 +99,7 @@ public class Main extends JavaPlugin {
 			entities.remove(i);
 		}
 		if (!this.getConfig().getBoolean("isHub")) {
-			Lobby.getGame().worldManager.resetMap();
+			Lobby.getGame().worldManager.reset();
 		}
 	}
 
@@ -110,10 +113,22 @@ public class Main extends JavaPlugin {
 		}
 	}
 
-	public static void getPlayerBalance(){
-		//TODO
+	public static int getPlayerBalance(UUID uu){
+		ResultSet rs;
+		try {
+			rs = Main.sql.querySQL("SELECT money FROM UserStats WHERE uuid='" + uu.toString() + "'");
+			int n = 0;
+			while(rs.next()){
+				n = rs.getInt("money");
+			}
+			rs.close();
+			return n;
+		} catch (ClassNotFoundException | SQLException e) {
+			//nothing
+		}
+		return 0;
 	}
-	
+
 	private boolean setupEconomy() {
 		RegisteredServiceProvider<Economy> economyProvider = getServer()
 				.getServicesManager().getRegistration(

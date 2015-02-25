@@ -260,6 +260,8 @@ public class TurfPlayer {
 		this.addArrowCooldown();
 		p.getInventory().clear();
 		p.getInventory().setContents(kit.getItems().toArray(new ItemStack[kit.getItems().size()]));
+		p.updateInventory();
+		p.removePotionEffect(PotionEffectType.SLOW);
 	}
 
 	public void returnToHub(){
@@ -274,6 +276,7 @@ public class TurfPlayer {
 		{
 			e.printStackTrace();
 		}
+		getPlayer().removePotionEffect(PotionEffectType.SLOW);
 		getPlayer().sendPluginMessage(Main.instance, "BungeeCord", b.toByteArray());
 	}
 

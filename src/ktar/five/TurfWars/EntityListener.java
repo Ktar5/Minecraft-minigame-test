@@ -62,25 +62,34 @@ public class EntityListener implements Listener {
 			TurfPlayer player = Lobby.players.getTurfPlayer(event.getPlayer().getUniqueId());
 			if (type.equals(MobType.BLUESHEEP) || type.equals(MobType.REDSHEEP)) {
 				if(!Lobby.players.switchTeam(player)){
-                		    event.getPlayer().sendMessage("Team full");
+                		    event.getPlayer().sendMessage(MessageStorage.get("teamfull"));
                 		}
 			}else if(type.equals(MobType.MARKSMAN)){
 				player.kit = Kit.MARKSMAN;
+				event.getPlayer().sendMessage(MessageStorage.get("kitSwitchSuccess"));
 			}else if (type.equals(MobType.INFILTRATOR)){
 				if(player.hasKitUnlocked(Kit.INFILTRATOR)){
 					player.kit = Kit.INFILTRATOR;
+					event.getPlayer().sendMessage(MessageStorage.get("kitSwitchSuccess"));
 				}else if (player.canBuy(Kit.INFILTRATOR.cost)){
 					player.unlockKit(Kit.INFILTRATOR);
 					player.removeMoney(Kit.INFILTRATOR.cost);
 					player.kit = Kit.INFILTRATOR;
+					event.getPlayer().sendMessage(MessageStorage.get("purchaseSuccess"));
+				}else{
+					event.getPlayer().sendMessage(MessageStorage.get("notEnoughMoney"));
 				}
 			}else if (type.equals(MobType.SHREDDER)){
 				if(player.hasKitUnlocked(Kit.SHREDDER)){
 					player.kit = Kit.SHREDDER;
+					event.getPlayer().sendMessage(MessageStorage.get("kitSwitchSuccess"));
 				}else if (player.canBuy(Kit.SHREDDER.cost)){
 					player.unlockKit(Kit.SHREDDER);
 					player.removeMoney(Kit.SHREDDER.cost);
 					player.kit = Kit.SHREDDER;
+					event.getPlayer().sendMessage(MessageStorage.get("purchaseSuccess"));
+				}else{
+					event.getPlayer().sendMessage(MessageStorage.get("notEnoughMoney"));
 				}
 			}
 			event.setCancelled(true);
