@@ -32,7 +32,7 @@ public class Lobby implements Listener{
 	public static WorldManager info;
 	public static GameStatus status;
 	public static int seconds;
-	public static int lobbyCountdown = 15;
+	public static int lobbyCountdown = 50;
 	public static GamePlayers players;
 	public static String serverid;
 
@@ -86,14 +86,14 @@ public class Lobby implements Listener{
 				Scoreboards.getGameScoreboard(p);
 			}
 		}
-        if (status == GameStatus.WAITING_FOR_PLAYERS && players.gameFull()) {
+        if (status == GameStatus.WAITING_FOR_PLAYERS && players.hasEnoughPlayers()) {
             seconds = 0;
             updateStatus(GameStatus.LOBBY_COUNTDOWN);
         } else if (status == GameStatus.LOBBY_COUNTDOWN) {
-            if (!players.gameFull()) {
+            if (!players.hasEnoughPlayers()) {
                 seconds = 0;
                 updateStatus(GameStatus.WAITING_FOR_PLAYERS);
-            } else if (players.gameFull() && seconds == lobbyCountdown) {
+            } else if (players.hasEnoughPlayers() && seconds == lobbyCountdown) {
                 this.startGame();
                 seconds = 0;
                 updateStatus(GameStatus.STARTING);

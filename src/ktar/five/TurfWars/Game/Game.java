@@ -48,16 +48,10 @@ public class Game {
 		totalTime++;
 		if (Lobby.status == GameStatus.STARTING) {
 			if (Lobby.seconds == 0) {
-				for (TurfPlayer player : Lobby.players.getAll().values()) {
-					player.canMove = false;
-				}
 				displayStartGametitlecountdown();
 			} else if (Lobby.seconds != Phase.startCount.getSeconds()) {
 				displayStartGametitlecountdown();
 			} else if(Lobby.seconds == Phase.startCount.getSeconds()) {
-				for (TurfPlayer player : Lobby.players.getAll().values()) {
-					player.canMove = true;
-				}
 				Lobby.seconds = 0;
 				displayStartGametitle();
 				Lobby.updateStatus(GameStatus.IN_PROGRESS);
@@ -77,15 +71,19 @@ public class Game {
 
 	private void displayStartGametitlecountdown() {
 		int n = (Phase.startCount.getSeconds() - Lobby.seconds);
-		for(TurfPlayer player : Lobby.players.getAll().values())
+		for(TurfPlayer player : Lobby.players.getAll().values()){
 			TitleAPI.sendTitle(player.getPlayer(), 0, 19, 0,
 					MessageStorage.get("countdown").replaceAll("<seconds>", String.valueOf(n)), 
 					MessageStorage.get("countdown").replaceAll("<seconds>", String.valueOf(n)));
+		player.canMove = false;
+		}
 	}
 
 	private void displayStartGametitle() {
-		for(TurfPlayer player : Lobby.players.getAll().values())
+		for(TurfPlayer player : Lobby.players.getAll().values()){
 			TitleAPI.sendTitle(player.getPlayer(), 0, 19, 0, MessageStorage.get("startGame"), MessageStorage.get("startGameSub"));
+		player.canMove = true;
+		}
 	}
 
 	private void handlePhases() {

@@ -1,5 +1,6 @@
 package ktar.five.TurfWars.Game;
 
+import java.lang.reflect.Field;
 import java.util.UUID;
 
 import ktar.five.TurfWars.Main;
@@ -16,8 +17,10 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.craftbukkit.v1_8_R1.entity.CraftArrow;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Damageable;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
@@ -31,6 +34,7 @@ import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.util.BlockIterator;
 
 public class GameListeners implements Listener{
@@ -42,16 +46,21 @@ public class GameListeners implements Listener{
 			if(Lobby.getGame().phase.getType() == PhaseType.BUILDING){
 				if(!Lobby.getGame().worldManager.canBePlaced(event.getBlockPlaced(), Lobby.players.getPlayerTeam(event.getPlayer().getUniqueId()))){
 					event.setCancelled(true);
-				}else{
+				}else if(event.getBlockAgainst().getType() == Material.STAINED_CLAY
+						|| event.getBlockAgainst().getType() == Material.WOOL){
 					Lobby.getGame().worldManager.addPlacedBlock(event.getBlockPlaced());
 					Lobby.players.getTurfPlayer(event.getPlayer().getUniqueId()).placedBlock();
+				}else{
+					event.setCancelled(true);
 				}
 			}else{
 				event.setCancelled(true);
 			}
+		}else{
+			event.setCancelled(true);
 		}
 	}
-	
+
 	@EventHandler
 	public void playerDestroyBlock(BlockBreakEvent event){
 		if(Lobby.players.playerInGame(event.getPlayer().getUniqueId()) && Lobby.status == GameStatus.IN_PROGRESS){
@@ -60,7 +69,7 @@ public class GameListeners implements Listener{
 			}
 		}
 	}
-	
+
 	@EventHandler
 	public void entityHitByOtherEntity(EntityDamageByEntityEvent event) {
 		if (event.getEntity() instanceof Player) {
@@ -80,7 +89,7 @@ public class GameListeners implements Listener{
 								((Lobby.players.getPlayerTeam(player).equals(Team.RED) ? "&4" : "&b")
 										+ player.getPlayer().getName().toUpperCase())));
 					}
-					
+
 				}else if (event.getCause().equals(DamageCause.PROJECTILE) && event.getDamager() instanceof Arrow){
 					Arrow arrow = (Arrow) event.getDamager();
 					Player damager = Bukkit.getPlayer((UUID) arrow.getMetadata("Arrow").get(0).value());
@@ -124,25 +133,47 @@ public class GameListeners implements Listener{
 	}
 
 	@EventHandler
-	public void projectileHitEvent(ProjectileHitEvent event) {
-		Player shooter = Bukkit.getPlayer((UUID) event.getEntity().getMetadata("Arrow").get(0).value());
+	private void onProjectileHit(final ProjectileHitEvent e) {
+		final Player shooter = Bukkit.getPlayer((UUID) e.getEntity().getMetadata("Arrow").get(0).value());
 		if(Lobby.players.playerInGame(shooter.getUniqueId()) && Lobby.status == GameStatus.IN_PROGRESS){
-			if(event.getEntity().isOnGround()){
-			    World world = event.getEntity().getWorld();
-			    BlockIterator iterator = new BlockIterator(world, 
-			    		event.getEntity().getLocation().toVector(), 
-			    		event.getEntity().getVelocity().normalize(), 0, 4);
-			    Block hitBlock = null;
-			    while(iterator.hasNext()) {
-			        hitBlock = iterator.next();
-			        if(hitBlock.getType() != Material.AIR){ //Check all non-solid blockid's here.
-			            break;
-			        }
-			    }
-				if(hitBlock.getType() == Material.WOOL){
-					Lobby.getGame().worldManager.removeIfIsPlacedBlock(hitBlock);
-					Lobby.players.getTurfPlayer(shooter.getUniqueId()).brokeBlock();	
-				}
+			if (e.getEntityType() == EntityType.ARROW) {
+				// Must be run in a delayed task otherwise it won't be able to find the block
+				Bukkit.getScheduler().scheduleSyncDelayedTask(Main.instance, new Runnable() {
+					public void run() {
+						try {
+
+							net.minecraft.server.v1_8_R1.EntityArrow entityArrow = ((CraftArrow) e
+									.getEntity()).getHandle();
+
+							Field fieldX = net.minecraft.server.v1_8_R1.EntityArrow.class
+									.getDeclaredField("d");
+							Field fieldY = net.minecraft.server.v1_8_R1.EntityArrow.class
+									.getDeclaredField("e");
+							Field fieldZ = net.minecraft.server.v1_8_R1.EntityArrow.class
+									.getDeclaredField("f");
+
+							fieldX.setAccessible(true);
+							fieldY.setAccessible(true);
+							fieldZ.setAccessible(true);
+
+							int x = fieldX.getInt(entityArrow);
+							int y = fieldY.getInt(entityArrow);
+							int z = fieldZ.getInt(entityArrow);
+
+							if (y != -1) {
+								Block block = e.getEntity().getWorld().getBlockAt(x, y, z);
+								if(block.getType() != Material.AIR){ //Check all non-solid blockid's here.
+									return;
+								}else if(block.getType() == Material.WOOL){
+									Lobby.getGame().worldManager.removeIfIsPlacedBlock(block);
+									Lobby.players.getTurfPlayer(shooter.getUniqueId()).brokeBlock();	
+								}
+							}
+						} catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e1) {
+							e1.printStackTrace();
+						}
+					}
+				});
 			}
 		}
 	}

@@ -17,7 +17,7 @@ import org.bukkit.inventory.ItemStack;
 public class GamePlayers {
 
     public Map<UUID, TurfPlayer> spectators, redTeam, blueTeam;
-    public final int maxPerTeam = 1;
+    public final int maxPerTeam = 8, minPerTeam=4;
 
     public GamePlayers() {
         this.redTeam = new HashMap<>();
@@ -31,6 +31,10 @@ public class GamePlayers {
         } else {
             return redTeam.size() == maxPerTeam;
         }
+    }
+    
+    public boolean hasEnoughPlayers(){
+    	return this.redTeam.size() >= minPerTeam && this.blueTeam.size() >= minPerTeam;
     }
     
     public TurfPlayer getTurfPlayer(UUID uu){

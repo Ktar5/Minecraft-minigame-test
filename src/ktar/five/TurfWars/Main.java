@@ -99,7 +99,7 @@ public class Main extends JavaPlugin {
 			entities.remove(i);
 		}
 		if (!this.getConfig().getBoolean("isHub")) {
-			Lobby.getGame().worldManager.reset();
+			Lobby.info.reset();
 		}
 	}
 
